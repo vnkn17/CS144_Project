@@ -7,11 +7,58 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+
+class SignUp extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      email: '',
+      password: ''
+    }
+  }
+
+  signUp() {
+    console.log('this.state', this.state)
+  } 
+
+
+  render() {
+    return (
+      <div className='form-inline'>
+        <h2>Sign Up</h2>
+        <div className='form-group'>
+          <input 
+            className='form-control'
+            type='text'
+            placeholder='email'
+            onChange={event => this.setState({email: event.target.value})}
+          />
+          <input
+            className='form-control'
+            type='password'
+            placeholder='Password'
+            onChange={event => this.setState({password: event.target.value})} 
+          />
+          <button
+            className='btn btn-primary'
+            type='button'
+            onClick={() => this.signUp()}
+          >
+          Sign Up
+          </button> 
+        </div>
+      </div>      
+    )
+  }
+}
+
 class App extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      email: '',
+      password: '',
       storageValue: 0,
       web3: null
     }
@@ -67,6 +114,38 @@ class App extends Component {
     })
   }
 
+
+  render() {
+  return (
+    <div className='mainBox'>
+      <h1>Login or Sign Up</h1>
+      <div className='formBox'>
+        <input 
+          className='inputField'
+          type='text'
+          placeholder='Email or Username'
+          onChange={event => this.setState({email: event.target.value})}
+        />
+        
+        <input
+          className='inputField'
+          type='password'
+          placeholder='Password'
+          onChange={event => this.setState({password: event.target.value})} 
+        />
+        <p></p>
+        <button
+          className='submitButton'
+          type='button'
+          onClick={() => this.signUp()}
+        >
+        Submit
+        </button> 
+      </div>
+    </div>      
+  )
+}
+/*
   render() {
     return (
       <div className="App">
@@ -77,7 +156,24 @@ class App extends Component {
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
+              <div className='LoginForm'>
+                <h1>Login</h1>
+                <div className="post"> 
+                  <p><input className = 'text' name = 'login' value = '' placeholder = 'Username or Email'/></p>
+                  <p><input type = 'password' name = 'password' value = '' placeholder = 'Password'/></p>
+                  <p class='remember_me'>
+                    <label>
+                      <input type='checkbox' name='remember_me' id='remember_me'/>
+                      Remember me on this computer
+                    </label>
+                  </p>
+                  <p class='submit'><input type='submit' name='commit' value='Login'/></p>
+                </div>
+              </div>
+              <div class='login-help'>
+                <p>Forgot your password? <a>Click here to reset it.</a></p> 
+              </div>
+              <h1>Testing Go!</h1>
               <p>Your Truffle Box is installed and ready.</p>
               <h2>Smart Contract Example</h2>
               <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
@@ -88,7 +184,7 @@ class App extends Component {
         </main>
       </div>
     );
-  }
+  }*/
 }
 
 export default App
