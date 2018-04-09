@@ -7,7 +7,15 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
-
+class Questions extends Component{
+  constructor(props) {
+    super(props)
+    this.state = {
+      email: '',
+      password: ''
+    }
+  }
+}
 class SignUp extends Component {
   constructor(props) {
     super(props)
@@ -17,6 +25,9 @@ class SignUp extends Component {
     }
   }
 
+  Questions() {
+    console.log('this.state', this.state)
+  }
   signUp() {
     console.log('this.state', this.state)
   } 
@@ -25,7 +36,7 @@ class SignUp extends Component {
   render() {
     return (
       <div className='form-inline'>
-        <h2>Sign Up</h2>
+        <h2>Sign Up Button</h2>
         <div className='form-group'>
           <input 
             className='form-control'
@@ -118,7 +129,7 @@ class App extends Component {
   render() {
   return (
     <div className='mainBox'>
-      <h1>Login or Sign Up</h1>
+      <h1>Login or Sign Up Here!</h1>
       <div className='formBox'>
         <input 
           className='inputField'
