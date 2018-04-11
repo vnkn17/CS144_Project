@@ -7,6 +7,24 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+
+// Firebase initialization and configuration.
+var firebase = require("firebase");
+
+var config = {
+  apiKey: "AIzaSyCi8dwkcinoJJp857hsUR9vFHdXY9qlMf8",
+  authDomain: "questoken-4d83d.firebaseapp.com",
+  databaseURL: "https://questoken-4d83d.firebaseio.com",
+  projectId: "questoken-4d83d",
+  storageBucket: "questoken-4d83d.appspot.com",
+  messagingSenderId: "899474202805"
+};
+
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+
 class Questions extends Component{
   constructor(props) {
     super(props)
@@ -16,6 +34,7 @@ class Questions extends Component{
     }
   }
 }
+
 class SignUp extends Component {
   constructor(props) {
     super(props)
