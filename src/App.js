@@ -33,6 +33,18 @@ class Questions extends Component{
       password: ''
     }
   }
+
+  getQuestions() {
+    var userId = firebase.auth().currentUser.uid;
+    return firebase.database().ref('/questions').once('value').then(function(snapshot) {
+      var questions = (snapshot.val() && snapshot.val().questions) || {};
+      render(questions)
+    });
+  }
+
+  render(questions) {
+    console.log('questions\n', questions)
+  }
 }
 
 class SignUp extends Component {
