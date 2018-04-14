@@ -131,7 +131,7 @@ export default class PledgeTokens extends Component {
     return (
       <div className="PledgeTokens">
         <div className="App-header">
-          <h2>React Quiz</h2>
+          <h2>QuesToken</h2>
         </div>
         {this.state.result ? this.renderResult() : this.renderQuiz()}
       </div>
