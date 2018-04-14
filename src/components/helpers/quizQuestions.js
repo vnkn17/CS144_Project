@@ -16,7 +16,6 @@ var quizQuestions = [
           }
       ]
   },
-  /*
   {
       question: "Which console would you prefer to play with friends?",
       answers: [
@@ -85,7 +84,6 @@ var quizQuestions = [
           }
       ]
   }
-  */
 ];
 
 export default quizQuestions;
