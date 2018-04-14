@@ -75,6 +75,7 @@ code {
   padding-top: 100px;
   flex-direction: column;
   align-items: center;
+  width: 100% 
 }
 
 .formBox {
@@ -113,4 +114,36 @@ code {
 .submitButton:hover {
     background-color: #008CBA; 
     color: white;
+}
+
+
+/* ASK QUESTION PAGE */
+
+
+
+.questionForm {
+  display: flex;
+  flex-direction: column;
+  width: 80% 
+}
+
+.questionBox {
+  display: flex;
+  height: 100px;
+  text-align: center;
+}
+
+
+.tokens {
+  display: flex;
+  padding-right: 5px;
+}
+
+.resolveDate {
+  display: flex; 
+}
+
+
+.extras {
+  padding-bottom: 20px;
 }

@@ -1,31 +1,33 @@
 import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import getWeb3 from './utils/getWeb3'
+import Home from './components/Home'
+import SignUp from './components/SignUp'
+import SignIn from './components/SignIn'
+import AskQuestion from './components/AskQuestion'
+import AnswerQuestion from './components/AnswerQuestion'
+import PledgeTokens from './components/PledgeTokens'
+import {BrowserRouter, Route} from 'react-router-dom';
+import firebase from 'firebase'
 
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
-
-// Firebase initialization and configuration.
-var firebase = require("firebase");
-
 var config = {
-  apiKey: "AIzaSyCi8dwkcinoJJp857hsUR9vFHdXY9qlMf8",
-  authDomain: "questoken-4d83d.firebaseapp.com",
-  databaseURL: "https://questoken-4d83d.firebaseio.com",
-  projectId: "questoken-4d83d",
-  storageBucket: "questoken-4d83d.appspot.com",
-  messagingSenderId: "899474202805"
+  apiKey: "AIzaSyB5KIYEuL2FMOSdeJMjYCY3oiC8uZStK84",
+  authDomain: "cs144-project.firebaseapp.com",
+  databaseURL: "https://cs144-project.firebaseio.com",
+  projectId: "cs144-project",
+  storageBucket: "cs144-project.appspot.com",
+  messagingSenderId: "33058663147",
 };
 
 firebase.initializeApp(config);
 
-var database = firebase.database();
 
-
-class Questions extends Component{
+/*class Questions extends Component{
   constructor(props) {
     super(props)
     this.state = {
@@ -33,21 +35,8 @@ class Questions extends Component{
       password: ''
     }
   }
-
-  getQuestions() {
-    var userId = firebase.auth().currentUser.uid;
-    return firebase.database().ref('/questions').once('value').then(function(snapshot) {
-      var questions = (snapshot.val() && snapshot.val().questions) || {};
-      render(questions)
-    });
-  }
-
-  render(questions) {
-    console.log('questions\n', questions)
-  }
-}
-
-class SignUp extends Component {
+}*/
+/*class SignUp extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -68,7 +57,7 @@ class SignUp extends Component {
     return (
       <div className='form-inline'>
         <h2>Sign Up Button</h2>
-        <div className='form-group'>
+        <form onSubmit={this.onSubmit} className='form-group'>
           <input 
             className='form-control'
             type='text'
@@ -88,12 +77,12 @@ class SignUp extends Component {
           >
           Sign Up
           </button> 
-        </div>
+        </form>
       </div>      
     )
   }
 }
-
+*/
 class App extends Component {
   constructor(props) {
     super(props)
@@ -158,75 +147,44 @@ class App extends Component {
 
 
   render() {
-  return (
-    <div className='mainBox'>
-      <h1>Login or Sign Up Here!</h1>
-      <div className='formBox'>
-        <input 
-          className='inputField'
-          type='text'
-          placeholder='Email or Username'
-          onChange={event => this.setState({email: event.target.value})}
-        />
-        
-        <input
-          className='inputField'
-          type='password'
-          placeholder='Password'
-          onChange={event => this.setState({password: event.target.value})} 
-        />
-        <p></p>
-        <button
-          className='submitButton'
-          type='button'
-          onClick={() => this.signUp()}
-        >
-        Submit
-        </button> 
-      </div>
-    </div>      
-  )
-}
-/*
-  render() {
     return (
-      <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-        </nav>
-
-        <main className="container">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              <div className='LoginForm'>
-                <h1>Login</h1>
-                <div className="post"> 
-                  <p><input className = 'text' name = 'login' value = '' placeholder = 'Username or Email'/></p>
-                  <p><input type = 'password' name = 'password' value = '' placeholder = 'Password'/></p>
-                  <p class='remember_me'>
-                    <label>
-                      <input type='checkbox' name='remember_me' id='remember_me'/>
-                      Remember me on this computer
-                    </label>
-                  </p>
-                  <p class='submit'><input type='submit' name='commit' value='Login'/></p>
-                </div>
-              </div>
-              <div class='login-help'>
-                <p>Forgot your password? <a>Click here to reset it.</a></p> 
-              </div>
-              <h1>Testing Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
+      <BrowserRouter>
+        <div>
+          <Route exact={true} path='/' render={() => (
+            <div className="App">
+              <Home />
             </div>
-          </div>
-        </main>
-      </div>
+          )}/>
+          <Route exact={true} path='/signin' render={() => (
+            <div className="App">
+              <SignIn />
+            </div>
+          )}/>
+          <Route exact={true} path='/askquestion' render={() => (
+            <div className="App">
+              <AskQuestion />
+            </div>
+          )}/>
+          <Route exact={true} path='/signup' render={() => (
+            <div className="App">
+              <SignUp />
+            </div>
+          )}/>
+          <Route exact={true} path='/answerquestion' render={() => (
+            <div className="App">
+              <AnswerQuestion />
+            </div>
+          )}/>
+          <Route exact={true} path='/PledgeTokens' render={() => (
+            <div className="App">
+              <PledgeTokens />
+            </div>
+          )}/>
+
+        </div>
+      </BrowserRouter>
     );
-  }*/
+  }
 }
 
 export default App
