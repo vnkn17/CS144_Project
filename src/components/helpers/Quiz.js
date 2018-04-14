@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import Question from '../components/Question';
-import QuestionCount from '../components/QuestionCount';
-import AnswerOption from '../components/AnswerOption';
+import Question from '../helpers/Question';
+import QuestionCount from '../helpers/QuestionCount';
+import AnswerOption from '../helpers/AnswerOption';
 
 function Quiz(props) {
 
