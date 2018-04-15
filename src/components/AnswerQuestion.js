@@ -3,9 +3,11 @@ import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
 import { Button } from 'reactstrap';
 import GithubUsers from './helpers/GithubUsers';
 import ReactDOM from 'react-dom';
+import firebase from 'firebase';
 
 const INITIAL_STATE = {
   question: '',
+  // questionId: ''
   numTokens: '',
   resolveDate: '',
   error: null,
@@ -25,10 +27,12 @@ export default class AnswerQuestion extends Component {
       numTokens,
       resolveDate,
     } = this.state;
-   
 
-   /*FIREBASE STUFF GOES HERE*/
-	}
+  /*FIREBASE STUFF GOES HERE*/
+
+
+  }
+
 	toggle() {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen

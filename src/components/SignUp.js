@@ -18,13 +18,16 @@ export default class SignUp extends Component {
     super(props);
     this.state = {INITIAL_STATE};
   }
-  onSubmit  =  (event) => {
-        const {
+
+  onSubmit = (event) => {
+    const {
       username,
       email,
       passwordOne,
+      passwordTwo
     } = this.state;
-   
+
+    var database = firebase.database();
 
     firebase.auth().createUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
@@ -35,9 +38,44 @@ export default class SignUp extends Component {
       });
 
     event.preventDefault();
+
+    ////////// TOMISLAV'S ATTEMPT:
+    console.log('this.state', this.state)
+    if (!database.ref('/users').exists()) {
+      database().ref('/users').set({
+        numUsers : 0,
+        userData : {}
+      });
+      this.signUp()
+    }
+    else {
+      // var newUserId = (database.ref('/users/numUsers')).val();
+      if (database.ref('/users/userData/' + email).exists()) {
+        // DISPLAY "SORRY, EMAIL TAKEN" SIGN HERE
+      }
+      else {
+        if (passwordOne != passwordTwo) {
+          // PRINT SOMETHING LIKE "PASSWORD CONFIRMATION MUST MATCH ORIGINAL PASSWORD!"
+        }
+        else {
+          var initialTokenNum = 0; // JUST SOME PLACEHOLDER STUFF TO GET TO COMPILE
+          var newEthAddress = "0x0"; // ALSO PLACEHOLDER
+          database().ref('/users/userData/' + email).set({
+            password : passwordOne,
+            fullname : username,
+            // NEED TO DO SOME SOLIDITY STUFF TO GET NEW USER ADDRESS (will assume this variable exists)
+            ethAddress : newEthAddress,
+            numTokens : initialTokenNum // WILL BE SET IN SOLIDITY CONTRACT
+          });
+
+          // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS
+        }
+      }
+    }
+    //////////
   }
 
-    render() {
+  render() {
     const {
       username,
       email,

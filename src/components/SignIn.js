@@ -30,6 +30,8 @@ class SignIn extends Component {
       history,
     } = this.props;  
 
+    var database = firebase.database();
+
     firebase.auth().SignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
@@ -40,6 +42,16 @@ class SignIn extends Component {
       });
 
     event.preventDefault();
+
+    if (!database.ref('/users/userData/' + email).exists()) {
+      // DISPLAY "SORRY, EMAIL NOT RECOGNIZED. PLEASE SIGN UP!"
+    }
+    else if (this.state.password != database().ref('/users/userData/' + email + "/password").val()) {
+      // DISPLAY "SORRY, INCORRECT PASSWORD FOR THIS USERNAME"
+    }
+    else {
+      // REDIRECT TO PAGE WITH ALL QUESTIONS LISTED
+    }
   }
   
   render () {  

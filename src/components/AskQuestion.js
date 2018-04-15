@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import firebase from 'firebase';
 
 const INITIAL_STATE = {
   question: '',
@@ -18,9 +19,29 @@ export default class AskQuestion extends Component {
       numTokens,
       resolveDate,
     } = this.state;
+
+    var database = firebase.database();
    
 
-   /*FIREBASE STUFF GOES HERE*/
+    /*FIREBASE STUFF GOES HERE*/
+    // I am assuming that we have certain fields included in the database such as question IDs,
+    // and other relevant pieces of information.
+    if (!database().ref('/questions').exists()) {
+      database().ref('/questions').set({
+        questionCount : 0,
+        questionData : {}
+      });
+    }
+    else {
+      var newQuestionId = database().ref('questions/questionCount').value();
+      database.ref('questions/questionCount').set(newQuestionId + 1);
+      database.ref('questions/questionData/' + newQuestionId).set({
+        question : question,
+        numTokens : numTokens,
+        resolveDate : resolveDate,
+        answers : {}
+      });
+    }
   }
 
    render () {                                   
