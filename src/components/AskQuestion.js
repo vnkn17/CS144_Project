@@ -14,34 +14,53 @@ export default class AskQuestion extends Component {
     this.state = {INITIAL_STATE};
   }
   onSubmit  =  (event) => {
-        const {
+    const {
       question,
       numTokens,
       resolveDate,
     } = this.state;
 
     var database = firebase.database();
-   
+  
+    var currentUser = firebase.auth().currentUser;
+    var email;
+    if (currentUser != null) {
+      email = currentUser.email;
+    }
+
+    var userID;
+    database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+      userID = snapshot.val();
+    });
 
     /*FIREBASE STUFF GOES HERE*/
     // I am assuming that we have certain fields included in the database such as question IDs,
     // and other relevant pieces of information.
-    if (!database().ref('/questions').exists()) {
-      database().ref('/questions').set({
-        questionCount : 0,
-        questionData : {}
-      });
-    }
-    else {
-      var newQuestionId = database().ref('questions/questionCount').value();
-      database.ref('questions/questionCount').set(newQuestionId + 1);
-      database.ref('questions/questionData/' + newQuestionId).set({
-        question : question,
-        numTokens : numTokens,
-        resolveDate : resolveDate,
-        answers : {}
-      });
-    }
+    database.ref('/questions/questionCount').once("value").then(function(snapshot) {
+      if (!snapshot.exists()) {
+        database.ref('/questions').set({
+          questionCount : 1,
+          questionData : {}
+        });
+        database.ref('/questions/questionData/' + 0).set({
+          askerID : userID,
+          text : question,
+          tokensPledged : numTokens,
+          resolveDate : resolveDate,
+          correctAnswer : ""
+        });
+      }
+      else {
+        var newQuestionId = database().ref('questions/questionCount').value();
+        database.ref('questions/questionCount').set(newQuestionId + 1);
+        database.ref('questions/questionData/' + newQuestionId).set({
+          question : question,
+          numTokens : numTokens,
+          resolveDate : resolveDate,
+          answers : {}
+        });
+      }
+    });
   }
 
    render () {                                   

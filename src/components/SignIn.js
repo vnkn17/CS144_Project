@@ -43,7 +43,7 @@ class SignIn extends Component {
 
     event.preventDefault();
 
-    if (!database.ref('/users/userData/' + email).exists()) {
+    if (!firebase.database().ref('/users/userData/').hasChild()) {
       // DISPLAY "SORRY, EMAIL NOT RECOGNIZED. PLEASE SIGN UP!"
     }
     else if (this.state.password != database().ref('/users/userData/' + email + "/password").val()) {

@@ -29,50 +29,81 @@ export default class SignUp extends Component {
 
     var database = firebase.database();
 
+    if (passwordOne != passwordTwo) {
+      // Return some error message saying that passwords must match (front-end).
+    }
+
     firebase.auth().createUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         this.setState(() => ({ ...INITIAL_STATE }));
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
+        console.log(this.state.error)
       });
 
     event.preventDefault();
 
+    // database.ref('/testData').set({
+    //   test1Key : 'test1Val'
+    // })
+
+    // database.ref('/testData').once("value").then(function(snapshot) {
+    //   console.log("dank memes fam")
+    //   console.log(snapshot.exists())
+    // })
+
     ////////// TOMISLAV'S ATTEMPT:
     console.log('this.state', this.state)
-    if (!database.ref('/users').exists()) {
-      database().ref('/users').set({
-        numUsers : 0,
-        userData : {}
-      });
-      this.signUp()
-    }
-    else {
-      // var newUserId = (database.ref('/users/numUsers')).val();
-      if (database.ref('/users/userData/' + email).exists()) {
-        // DISPLAY "SORRY, EMAIL TAKEN" SIGN HERE
+
+    database.ref('/users').once("value").then(function(snapshot) {
+
+      // Use smart contracts to create new address for the new user, and store it in a new variable:
+      var newEthAddress = "0x0"; // To be changed later of course...
+      //////////
+
+      if (!snapshot.exists()) {
+        database.ref('/users/userCount').set({
+          userDount : 1,
+          emailsToIDs : {},
+          userData : {}
+        });
+        database.ref('/users/emailsToIDs/' + email).set({
+          userID : 0
+        });
+        database.ref('/users/userData/' + 0).set({
+          email : email,
+          username : username,
+          numQuestions : 0,
+          numAnswers : 0,
+          numCorrectAnswers : 0,
+          ethAddress : newEthAddress,
+          numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
+        });
       }
       else {
-        if (passwordOne != passwordTwo) {
-          // PRINT SOMETHING LIKE "PASSWORD CONFIRMATION MUST MATCH ORIGINAL PASSWORD!"
-        }
-        else {
-          var initialTokenNum = 0; // JUST SOME PLACEHOLDER STUFF TO GET TO COMPILE
-          var newEthAddress = "0x0"; // ALSO PLACEHOLDER
-          database().ref('/users/userData/' + email).set({
-            password : passwordOne,
-            fullname : username,
-            // NEED TO DO SOME SOLIDITY STUFF TO GET NEW USER ADDRESS (will assume this variable exists)
-            ethAddress : newEthAddress,
-            numTokens : initialTokenNum // WILL BE SET IN SOLIDITY CONTRACT
-          });
+        var newUserId = -1;
+        database.ref('/users/userCount').once("value").then(function(snapshot) {
+          newUserId = Number(snapshot.val());
+        });
+        database.ref('/users/userCount').set(newUserId + 1);
+        database.ref('/users/emailsToIDs/' + email).set({
+          userID : newUserId
+        });
+        database.ref('/users/userData/' + newUserId).set({
+          email : email,
+          username : username,
+          numQuestions : 0,
+          numAnswers : 0,
+          numCorrectAnswers : 0,
+          ethAddress : newEthAddress,
+          numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
+        });
 
-          // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS
-        }
+        // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS
       }
-    }
-    //////////
+      //////////
+    });
   }
 
   render() {
