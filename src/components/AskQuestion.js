@@ -8,6 +8,10 @@ const INITIAL_STATE = {
   error: null,
 };
 
+const byPropKey = (propertyName, value) => () => ({
+  [propertyName]: value,
+});
+
 export default class AskQuestion extends Component {
   constructor(props) {
     super(props);
@@ -20,12 +24,27 @@ export default class AskQuestion extends Component {
       }
     });
   }
-  onSubmit  =  (event) => {
+
+  logoutClick = () => {
+    firebase.auth().signOut().then(function() {
+      // Sign-out successful.
+      console.log("Succesful signing out."); 
+
+    }, function(error) {
+      // An error happened.
+      console.log("Error in signing out.");
+    });
+  }
+
+  onSubmit = (event) => {
     const {
       question,
       numTokens,
       resolveDate,
+      error,
     } = this.state;
+
+    console.log("submit clicked");
 
     /*FIREBASE STUFF GOES HERE*/
     // I am assuming that we have certain fields included in the database such as question IDs,
@@ -40,101 +59,149 @@ export default class AskQuestion extends Component {
       console.log("submit email: " + email);
     }
 
+    console.log('/users/emailsToIDs/' + email);
+    // for (var i= 0; i < 10000; i++) {
+    //   console.log("dank memes");
+    // }
+
     var userID;
+
+    event.preventDefault();
+
     database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
-      userID = snapshot.val();
+      // window.location.href = '/' + String(snapshot.exists());
+
+      console.log("wtf");
+
+      userID = snapshot.val().userID;
+
+      console.log(userID);
+
+      
+
+      database.ref('/questions/questionCount').once("value").then(function(snapshot) {
+        if (!snapshot.exists()) {
+          database.ref('/questions').set({
+            questionCount : 1,
+            questionData : {},
+            unresIndex : 1,
+            unresolved : {0 : 0},
+          });
+          database.ref('/questions/questionData/' + 0).set({
+            // questionID : 0,
+            askerID : userID,
+            text : question,
+            tokensPledged : numTokens,
+            resolveDate : resolveDate,
+            resolved : 'false',
+            answers : {},
+            correctAnswer : ''
+          });
+
+          window.location.href = '/askquestion';
+        }
+        else {
+          var newQuestionId;
+          database.ref('questions/questionCount').once("value").then(function(snapshot) {
+            newQuestionId = Number(snapshot.val());
+
+            database.ref('questions/questionCount').set(newQuestionId + 1);
+            database.ref('questions/questionData/' + newQuestionId).set({
+              // questionID : newQuestionId,
+              askerID : userID,
+              text : question,
+              tokensPledged : numTokens,
+              resolveDate : resolveDate,
+              resolved : 'false',
+              answers : {},
+              correctAnswer : ''
+            });
+            var newUnresIndex;
+            database.ref('/questions/unresIndex').once("value").then(function(snapshot) {
+              newUnresIndex = Number(snapshot.val());
+
+              database.ref('/questions/unresIndex').set(newUnresIndex + 1);
+              database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
+
+              window.location.href = '/askquestion';
+            });
+          });
+        }
+      });
     });
 
-    database.ref('/questions/questionCount').once("value").then(function(snapshot) {
-      if (!snapshot.exists()) {
-        database.ref('/questions').set({
-          questionCount : 1,
-          questionData : {},
-          unresIndex : 1,
-          unresolved : {0 : 0},
-        });
-        database.ref('/questions/questionData/' + 0).set({
-          // questionID : 0,
-          askerID : userID,
-          text : question,
-          tokensPledged : numTokens,
-          resolveDate : resolveDate,
-          resolved : 'false',
-          answers : {},
-          correctAnswer : ''
-        });
-      }
-      else {
-        var newQuestionId;
-        database.ref('questions/questionCount').once("value").then(function(snapshot) {
-          newQuestionId = Number(snapshot.val());
-        });
-        database.ref('questions/questionCount').set(newQuestionId + 1);
-        database.ref('questions/questionData/' + newQuestionId).set({
-          // questionID : newQuestionId,
-          askerID : userID,
-          text : question,
-          tokensPledged : numTokens,
-          resolveDate : resolveDate,
-          resolved : 'false',
-          answers : {},
-          correctAnswer : ''
-        });
-        var newUnresIndex;
-        database.ref('/questions/unresIndex').once("value").then(function(snapshot) {
-          newUnresIndex = Number(snapshot.val());
-        });
-        database.ref('/questions/unresIndex').set(newUnresIndex + 1);
-        database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
-      }
-    });
+    // database.ref('/questions/unresolved').on("value", function(snapshot) {
+    //     // Pass
+    // });
+
+    // while (true) {
+    //   console.log("dank memes");
+    // }
+
+    // console.log("not dank at all")
+    
     ////////// END FIREBASE CODE
   }
 
-   render () {                                   
-      return (
-        <div className='mainBox'>
-        	<h1> Post a question! </h1>
-        	<form className='questionForm'>
-        		<input
-        			className='questionBox'
-              		type='text'
-              		placeholder='Write question here...'
-              		/*value={this.getstate.question}*/
-/*              	onChange={event => this.setState(byPropKey('password', event.target.value))}*/
-        		/>
-        		<div className='extras'>
-        			<h5>Tokens </h5>
-        			<input
-        				className='tokens'
-        				type='number'
-        				/*value={this.getstate.numTokens}*/
-        				placeholder='Pledge tokens'
-        			/>
-        			<h5>Resolve Date </h5>
-        			<input
-        				className='resolveDate'
-        				type='date'
-        				placeholder='Resolve date'
-                       /*value={this.getstate.resolveDate}*/
-        			/>
-        		</div>
-        		<button
-        			className='submitButton'
-        			type='submit'
-        			/*onClick={() => this.}*/
-        		>
-        		Validate
-        		</button>
-        		<button
-        			className='submitButton'
-        			type='submit'
-        			/*onClick={() => this.}*/
-        		>
-        		Submit
-        		</button>
-        	</form>
-        </div>
-      )
-   }
+  render () {  
+    const {
+      question,
+      numTokens,
+      resolveDate,
+      error,
+    } = this.state;
+
+    return (
+      <div className='mainBox'>
+      	<h1> Post a question! </h1>
+      	<form className='questionForm' onSubmit = {this.onSubmit}>
+      		<input
+      			className='questionBox'
+            type='text'
+            placeholder='Write question here...'
+            value={question}
+            onChange={event => this.setState(byPropKey('question', event.target.value))}
+      		/>
+      		<div className='extras'>
+      			<h5>Tokens </h5>
+      			<input
+      				className='tokens'
+      				type='number'
+      				value={numTokens}
+      				placeholder='Pledge tokens'
+              onChange={event => this.setState(byPropKey('numTokens', event.target.value))}
+      			/>
+      			<h5>Resolve Date </h5>
+      			<input
+      				className='resolveDate'
+      				type='date'
+      				placeholder='Resolve date'
+              value={resolveDate}
+              onChange={event => this.setState(byPropKey('resolveDate', event.target.value))}
+      			/>
+      		</div>
+      		
+
+
+      		<button className='submitButton' type='submit'>
+      		  Submit
+      		</button>
+      	</form>
+
+        <button onClick={this.logoutClick}>Log Out User</button>
+      </div>
+    )
+  }
 }
+
+
+
+
+
+
+/*// <button
+            //  className='submitButton'
+            //  type='submit'
+            // >
+            // Validate
+            // </button>*/
