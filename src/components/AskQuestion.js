@@ -12,6 +12,13 @@ export default class AskQuestion extends Component {
   constructor(props) {
     super(props);
     this.state = {INITIAL_STATE};
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("email: " + firebase.auth().currentUser.email);
+      } else {
+        window.location.href = '/signin';
+      }
+    });
   }
   onSubmit  =  (event) => {
     const {
@@ -20,12 +27,17 @@ export default class AskQuestion extends Component {
       resolveDate,
     } = this.state;
 
+    /*FIREBASE STUFF GOES HERE*/
+    // I am assuming that we have certain fields included in the database such as question IDs,
+    // and other relevant pieces of information.
+
     var database = firebase.database();
   
     var currentUser = firebase.auth().currentUser;
     var email;
     if (currentUser != null) {
-      email = currentUser.email;
+      email = (currentUser.email).replace(".", '');
+      console.log("submit email: " + email);
     }
 
     var userID;
@@ -33,34 +45,50 @@ export default class AskQuestion extends Component {
       userID = snapshot.val();
     });
 
-    /*FIREBASE STUFF GOES HERE*/
-    // I am assuming that we have certain fields included in the database such as question IDs,
-    // and other relevant pieces of information.
     database.ref('/questions/questionCount').once("value").then(function(snapshot) {
       if (!snapshot.exists()) {
         database.ref('/questions').set({
           questionCount : 1,
-          questionData : {}
+          questionData : {},
+          unresIndex : 1,
+          unresolved : {0 : 0},
         });
         database.ref('/questions/questionData/' + 0).set({
+          // questionID : 0,
           askerID : userID,
           text : question,
           tokensPledged : numTokens,
           resolveDate : resolveDate,
-          correctAnswer : ""
+          resolved : 'false',
+          answers : {},
+          correctAnswer : ''
         });
       }
       else {
-        var newQuestionId = database().ref('questions/questionCount').value();
+        var newQuestionId;
+        database.ref('questions/questionCount').once("value").then(function(snapshot) {
+          newQuestionId = Number(snapshot.val());
+        });
         database.ref('questions/questionCount').set(newQuestionId + 1);
         database.ref('questions/questionData/' + newQuestionId).set({
-          question : question,
-          numTokens : numTokens,
+          // questionID : newQuestionId,
+          askerID : userID,
+          text : question,
+          tokensPledged : numTokens,
           resolveDate : resolveDate,
-          answers : {}
+          resolved : 'false',
+          answers : {},
+          correctAnswer : ''
         });
+        var newUnresIndex;
+        database.ref('/questions/unresIndex').once("value").then(function(snapshot) {
+          newUnresIndex = Number(snapshot.val());
+        });
+        database.ref('/questions/unresIndex').set(newUnresIndex + 1);
+        database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
       }
     });
+    ////////// END FIREBASE CODE
   }
 
    render () {                                   

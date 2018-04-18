@@ -29,7 +29,7 @@ export default class SignUp extends Component {
 
     var database = firebase.database();
 
-    if (passwordOne != passwordTwo) {
+    if (passwordOne !== passwordTwo) {
       // Return some error message saying that passwords must match (front-end).
     }
 
@@ -62,17 +62,19 @@ export default class SignUp extends Component {
       var newEthAddress = "0x0"; // To be changed later of course...
       //////////
 
+      var emailStripped = email.replace(".", '');
+
       if (!snapshot.exists()) {
         database.ref('/users/userCount').set({
           userDount : 1,
           emailsToIDs : {},
           userData : {}
         });
-        database.ref('/users/emailsToIDs/' + email).set({
+        database.ref('/users/emailsToIDs/' + emailStripped).set({
           userID : 0
         });
         database.ref('/users/userData/' + 0).set({
-          email : email,
+          email : emailStripped,
           username : username,
           numQuestions : 0,
           numAnswers : 0,
@@ -82,22 +84,28 @@ export default class SignUp extends Component {
         });
       }
       else {
+        console.log("activated");
         var newUserId = -1;
         database.ref('/users/userCount').once("value").then(function(snapshot) {
           newUserId = Number(snapshot.val());
-        });
-        database.ref('/users/userCount').set(newUserId + 1);
-        database.ref('/users/emailsToIDs/' + email).set({
-          userID : newUserId
-        });
-        database.ref('/users/userData/' + newUserId).set({
-          email : email,
-          username : username,
-          numQuestions : 0,
-          numAnswers : 0,
-          numCorrectAnswers : 0,
-          ethAddress : newEthAddress,
-          numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
+          console.log(newUserId);
+
+          database.ref('/users/userCount').set(newUserId + 1);
+          database.ref('/users/emailsToIDs/' + emailStripped).set({
+            userID : newUserId
+          });
+
+          console.log("continued");
+          database.ref('/users/userData/' + newUserId).set({
+            email : emailStripped,
+            username : username,
+            numQuestions : 0,
+            numAnswers : 0,
+            numCorrectAnswers : 0,
+            ethAddress : newEthAddress,
+            numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
+          });
+          console.log("finished");
         });
 
         // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS

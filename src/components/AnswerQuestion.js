@@ -20,6 +20,11 @@ export default class AnswerQuestion extends Component {
     this.state = {
       dropdownOpen: false
     };
+
+    // Parsing available questions to answer with Firebase:
+    var database = firebase.database();
+    var questions = []
+    // database.ref('/questions')
   }
   onSubmit  =  (event) => {
         const {
@@ -28,8 +33,21 @@ export default class AnswerQuestion extends Component {
       resolveDate,
     } = this.state;
 
-  /*FIREBASE STUFF GOES HERE*/
+  	/*FIREBASE STUFF GOES HERE*/
+  	var database = firebase.database();
 
+  	var user = firebase.auth().currentUser;
+  	var askerID;
+  	var currentUserID;
+  	database.ref('users/emailsToIDs/' + user.email).once("value").then(function(snapshot) {
+  		currentUserID = Number(snapshot.val());
+  	});
+
+  	if (currentUserID == askerID) {
+  		// RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
+  	}
+
+  	database.ref('/questions/')
 
   }
 

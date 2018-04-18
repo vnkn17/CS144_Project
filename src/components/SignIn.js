@@ -32,26 +32,29 @@ class SignIn extends Component {
 
     var database = firebase.database();
 
-    firebase.auth().SignInWithEmailAndPassword(email, password)
+    firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
-        history.push('/askq');
+        // history.push('/askq');
+        window.location.href = '/askquestion';
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
       });
 
+    console.log(firebase.auth().currentUser);
+
     event.preventDefault();
 
-    if (!firebase.database().ref('/users/userData/').hasChild()) {
-      // DISPLAY "SORRY, EMAIL NOT RECOGNIZED. PLEASE SIGN UP!"
-    }
-    else if (this.state.password != database().ref('/users/userData/' + email + "/password").val()) {
-      // DISPLAY "SORRY, INCORRECT PASSWORD FOR THIS USERNAME"
-    }
-    else {
-      // REDIRECT TO PAGE WITH ALL QUESTIONS LISTED
-    }
+    // if (!firebase.database().ref('/users/userData/').hasChild()) {
+    //   // DISPLAY "SORRY, EMAIL NOT RECOGNIZED. PLEASE SIGN UP!"
+    // }
+    // else if (this.state.password != database().ref('/users/userData/' + email + "/password").val()) {
+    //   // DISPLAY "SORRY, INCORRECT PASSWORD FOR THIS USERNAME"
+    // }
+    // else {
+    //   // REDIRECT TO PAGE WITH ALL QUESTIONS LISTED
+    // }
   }
   
   render () {  
@@ -88,7 +91,7 @@ class SignIn extends Component {
               disabled={isInvalid}
               className='submitButton'
               type='submit'
-              onClick={() => this.signUp()}
+              /*onClick={() => this.signUp()}*/
             >
             Submit
             </button>
