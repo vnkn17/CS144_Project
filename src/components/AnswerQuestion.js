@@ -6,11 +6,14 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 
 const INITIAL_STATE = {
-  question: '',
-  // questionId: ''
-  numTokens: '',
-  resolveDate: '',
-  error: null,
+  selectedQuestionID : -1,
+  askerID : -1,
+  tokensInEscrow : 0,
+  resolveDate : '',
+  selectedQuestionText : '',
+  currentAnswerList : [],
+  proposedAnswer : '',
+  error : null,
 };
 
 export default class AnswerQuestion extends Component {
@@ -23,15 +26,37 @@ export default class AnswerQuestion extends Component {
 
     // Parsing available questions to answer with Firebase:
     var database = firebase.database();
-    var questions = []
-    // database.ref('/questions')
+    var answerableInds = [];
+    var answerable = [];
+    database.ref('/questions/unresolved').once("value").then(function(snapshot) {
+      var dict = snapshot.val();
+      for (var key in dict) {
+        answerableInds.push(dict[key]);
+      }
+
+      for (var ind in answerableInds) {
+        database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
+          var qInfo = snapshot.val();
+          answerable.push(qInfo); // Creating array of answerable questions.
+        });
+      }
+
+
+    });
   }
-  onSubmit  =  (event) => {
-        const {
-      question,
-      numTokens,
+  onSubmit = (event) => {
+    const {
+      selectedQuestionID,
+      askerID,
+      tokensInEscrow,
       resolveDate,
+      selectedQuestionText,
+      currentAnswerList,
+      proposedAnswer,
+      error,
     } = this.state;
+
+    event.preventDefault();
 
   	/*FIREBASE STUFF GOES HERE*/
   	var database = firebase.database();
@@ -39,13 +64,21 @@ export default class AnswerQuestion extends Component {
   	var user = firebase.auth().currentUser;
   	var askerID;
   	var currentUserID;
+
   	database.ref('users/emailsToIDs/' + user.email).once("value").then(function(snapshot) {
   		currentUserID = Number(snapshot.val());
-  	});
 
-  	if (currentUserID == askerID) {
-  		// RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
-  	}
+      if (currentUserID == askerID) {
+        // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
+      }
+      else {
+        database.ref('/questions/questionData/' + selectedQuestionID).once("value").then(function(snapshot) {
+          // Do some stuff with parsing and attaching to answers array.
+          // Need to deal with answer IDs, and other such things.
+          // See User storage and question storage for examples.
+        });
+      }
+  	});
 
   	database.ref('/questions/')
 
