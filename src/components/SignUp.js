@@ -36,6 +36,67 @@ export default class SignUp extends Component {
     firebase.auth().createUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
         this.setState(() => ({ ...INITIAL_STATE }));
+
+        ////////// TOMISLAV'S ATTEMPT:
+        console.log('this.state', this.state)
+
+        database.ref('/users').once("value").then(function(snapshot) {
+
+          // Use smart contracts to create new address for the new user, and store it in a new variable:
+          var newEthAddress = "0x0"; // To be changed later of course...
+          //////////
+
+          var emailStripped = email.replace(/\./g, '_');
+          console.log(emailStripped)
+
+          if (!snapshot.exists()) {
+            database.ref('/users').set({
+              userCount : 1,
+              emailsToIDs : {},
+              userData : {}
+            });
+            database.ref('/users/emailsToIDs/' + emailStripped).set({
+              userID : 0 //"_0"
+            });
+            database.ref('/users/userData/0').set({ // _0
+              email : emailStripped,
+              username : username,
+              numQuestions : 0,
+              numAnswers : 0,
+              numCorrectAnswers : 0,
+              ethAddress : newEthAddress,
+              numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
+            });
+          }
+          else {
+            console.log("activated");
+            var newUserId = -1;
+            database.ref('/users/userCount').once("value").then(function(snapshot) {
+              newUserId = Number(snapshot.val()); //"_" + Number(snapshot.val());
+              console.log(newUserId);
+
+              database.ref('/users/userCount').set(Number(snapshot.val()) + 1);
+              database.ref('/users/emailsToIDs/' + emailStripped).set({
+                userID : newUserId
+              });
+
+              console.log("continued");
+              database.ref('/users/userData/' + newUserId).set({
+                email : emailStripped,
+                username : username,
+                numQuestions : 0,
+                numAnswers : 0,
+                numCorrectAnswers : 0,
+                ethAddress : newEthAddress,
+                numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
+              });
+              console.log("finished");
+            });
+
+            // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS
+          }
+          //////////
+        });
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -52,66 +113,6 @@ export default class SignUp extends Component {
     //   console.log("dank memes fam")
     //   console.log(snapshot.exists())
     // })
-
-    ////////// TOMISLAV'S ATTEMPT:
-    console.log('this.state', this.state)
-
-    database.ref('/users').once("value").then(function(snapshot) {
-
-      // Use smart contracts to create new address for the new user, and store it in a new variable:
-      var newEthAddress = "0x0"; // To be changed later of course...
-      //////////
-
-      var emailStripped = email.replace(".", '');
-
-      if (!snapshot.exists()) {
-        database.ref('/users/userCount').set({
-          userDount : 1,
-          emailsToIDs : {},
-          userData : {}
-        });
-        database.ref('/users/emailsToIDs/' + emailStripped).set({
-          userID : 0
-        });
-        database.ref('/users/userData/' + 0).set({
-          email : emailStripped,
-          username : username,
-          numQuestions : 0,
-          numAnswers : 0,
-          numCorrectAnswers : 0,
-          ethAddress : newEthAddress,
-          numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
-        });
-      }
-      else {
-        console.log("activated");
-        var newUserId = -1;
-        database.ref('/users/userCount').once("value").then(function(snapshot) {
-          newUserId = Number(snapshot.val());
-          console.log(newUserId);
-
-          database.ref('/users/userCount').set(newUserId + 1);
-          database.ref('/users/emailsToIDs/' + emailStripped).set({
-            userID : newUserId
-          });
-
-          console.log("continued");
-          database.ref('/users/userData/' + newUserId).set({
-            email : emailStripped,
-            username : username,
-            numQuestions : 0,
-            numAnswers : 0,
-            numCorrectAnswers : 0,
-            ethAddress : newEthAddress,
-            numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
-          });
-          console.log("finished");
-        });
-
-        // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS
-      }
-      //////////
-    });
   }
 
   render() {

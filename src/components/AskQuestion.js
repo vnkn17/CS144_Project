@@ -55,7 +55,7 @@ export default class AskQuestion extends Component {
     var currentUser = firebase.auth().currentUser;
     var email;
     if (currentUser != null) {
-      email = (currentUser.email).replace(".", '');
+      email = (currentUser.email).replace(/\./g, '_');
       console.log("submit email: " + email);
     }
 
@@ -94,15 +94,12 @@ export default class AskQuestion extends Component {
             tokensPledged : numTokens,
             resolveDate : resolveDate,
             resolved : 'false',
-            answers : {},
             correctAnswer : ''
           });
-
-          window.location.href = '/askquestion';
         }
         else {
           var newQuestionId;
-          database.ref('questions/questionCount').once("value").then(function(snapshot) {
+          database.ref('/questions/questionCount').once("value").then(function(snapshot) {
             newQuestionId = Number(snapshot.val());
 
             database.ref('questions/questionCount').set(newQuestionId + 1);
@@ -113,7 +110,6 @@ export default class AskQuestion extends Component {
               tokensPledged : numTokens,
               resolveDate : resolveDate,
               resolved : 'false',
-              answers : {},
               correctAnswer : ''
             });
             var newUnresIndex;
@@ -122,11 +118,21 @@ export default class AskQuestion extends Component {
 
               database.ref('/questions/unresIndex').set(newUnresIndex + 1);
               database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
-
-              window.location.href = '/askquestion';
             });
           });
         }
+
+        database.ref('/users/userData/' + userID + '/numQuestions').once("value").then(function(snapshot) {
+          console.log("snapshot:\n" + snapshot.val());
+          var currentQuestionNum = Number((snapshot.val()));
+          console.log("currentQuestionNum: " + currentQuestionNum);
+          database.ref('/users/userData/' + userID + '/numQuestions').set(1); //////////
+          database.ref('/users/userData/' + userID + '/numTokens').once("value").then(function(snapshot) {
+            var currentTokenNum = Number((snapshot.val()));
+            database.ref('/users/userData/' + userID + '/numTokens').set(currentTokenNum - Number(numTokens));
+            window.location.href = '/askquestion';
+          });
+        });
       });
     });
 

@@ -37,6 +37,7 @@ export default class AnswerQuestion extends Component {
       for (var ind in answerableInds) {
         database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
           var qInfo = snapshot.val();
+          console.log(qInfo);
           answerable.push(qInfo); // Creating array of answerable questions.
         });
       }
@@ -67,15 +68,37 @@ export default class AnswerQuestion extends Component {
   	database.ref('users/emailsToIDs/' + user.email).once("value").then(function(snapshot) {
   		currentUserID = Number(snapshot.val());
 
-      if (currentUserID == askerID) {
+      if (currentUserID === askerID) {
         // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
       }
       else {
-        database.ref('/questions/questionData/' + selectedQuestionID).once("value").then(function(snapshot) {
+        database.ref('/questions/questionData/' + selectedQuestionID + '/answers').once("value").then(function(snapshot) {
           // Do some stuff with parsing and attaching to answers array.
           // Need to deal with answer IDs, and other such things.
           // See User storage and question storage for examples.
-
+          if(!snapshot.exists()) {
+            database.ref('/questions/questionData' + selectedQuestionID + '/answers').set({
+              answerCount : 1,
+              answerData : {}
+            });
+            database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/0').set({
+              answererID : currentUserID,
+              answerText : proposedAnswer,
+              tokensAwarded : 0
+            });
+          }
+          else {
+            var newAnswerID;
+            database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
+              newAnswerID = Number(snapshot.val());
+              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
+              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
+                answererID : currentUserID,
+                answerText : proposedAnswer,
+                tokensAwarded : 0
+              });
+            });
+          }
         });
       }
   	});
