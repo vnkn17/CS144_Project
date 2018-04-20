@@ -62,7 +62,6 @@ export default class AnswerQuestion extends Component {
   	var database = firebase.database();
 
   	var user = firebase.auth().currentUser;
-  	var askerID;
   	var currentUserID;
 
   	database.ref('users/emailsToIDs/' + user.email).once("value").then(function(snapshot) {
@@ -76,6 +75,7 @@ export default class AnswerQuestion extends Component {
           // Do some stuff with parsing and attaching to answers array.
           // Need to deal with answer IDs, and other such things.
           // See User storage and question storage for examples.
+
         });
       }
   	});
