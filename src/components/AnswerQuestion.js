@@ -1,185 +1,276 @@
 import React, { Component } from 'react'
-import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
-import { Button } from 'reactstrap';
-import GithubUsers from './helpers/GithubUsers';
-import ReactDOM from 'react-dom';
-import firebase from 'firebase';
 
-const INITIAL_STATE = {
-  selectedQuestionID : -1,
-  askerID : -1,
-  tokensInEscrow : 0,
-  resolveDate : '',
-  selectedQuestionText : '',
-  currentAnswerList : [],
-  proposedAnswer : '',
-  error : null,
-};
 
 export default class AnswerQuestion extends Component {
   constructor(props) {
-		super(props);
-		this.toggle = this.toggle.bind(this);
-    this.state = {
-      dropdownOpen: false
-    };
+  	super(props);
+    this.state = {answer: '', value: 'coconut'};
 
-    // Parsing available questions to answer with Firebase:
-    var database = firebase.database();
-    var answerableInds = [];
-    var answerable = [];
-    database.ref('/questions/unresolved').once("value").then(function(snapshot) {
-      var dict = snapshot.val();
-      for (var key in dict) {
-        answerableInds.push(dict[key]);
-      }
-
-      for (var ind in answerableInds) {
-        database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
-          var qInfo = snapshot.val();
-          console.log(qInfo);
-          answerable.push(qInfo); // Creating array of answerable questions.
-        });
-      }
-
-
-    });
-  }
-  onSubmit = (event) => {
-    const {
-      selectedQuestionID,
-      askerID,
-      tokensInEscrow,
-      resolveDate,
-      selectedQuestionText,
-      currentAnswerList,
-      proposedAnswer,
-      error,
-    } = this.state;
-
-    event.preventDefault();
-
-  	/*FIREBASE STUFF GOES HERE*/
-  	var database = firebase.database();
-
-  	var user = firebase.auth().currentUser;
-  	var currentUserID;
-
-  	database.ref('users/emailsToIDs/' + user.email).once("value").then(function(snapshot) {
-  		currentUserID = Number(snapshot.val());
-
-      if (currentUserID === askerID) {
-        // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
-      }
-      else {
-        database.ref('/questions/questionData/' + selectedQuestionID + '/answers').once("value").then(function(snapshot) {
-          // Do some stuff with parsing and attaching to answers array.
-          // Need to deal with answer IDs, and other such things.
-          // See User storage and question storage for examples.
-          if(!snapshot.exists()) {
-            database.ref('/questions/questionData' + selectedQuestionID + '/answers').set({
-              answerCount : 1,
-              answerData : {}
-            });
-            database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/0').set({
-              answererID : currentUserID,
-              answerText : proposedAnswer,
-              tokensAwarded : 0
-            });
-          }
-          else {
-            var newAnswerID;
-            database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
-              newAnswerID = Number(snapshot.val());
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
-                answererID : currentUserID,
-                answerText : proposedAnswer,
-                tokensAwarded : 0
-              });
-            });
-          }
-        });
-      }
-  	});
-
-  	database.ref('/questions/')
-
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-	toggle() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-		});
-	ReactDOM.render(
-		<div>
-		<GithubUsers label="GitHub users (Async with fetch.js)" />	
-		</div>
-	);
-  }
-	
-   render () {                                   
-      return (
-        <div className='mainBox'>
-        	<h1> Answer a question! </h1>
-				<Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-        <DropdownToggle
-          tag="span"
-          onClick={this.toggle}
-          data-toggle="dropdown"
-          aria-expanded={this.state.dropdownOpen}
-        >
-          List of Questions
-        </DropdownToggle>
-        <DropdownMenu>
-          <div onClick={this.toggle}>Question 1</div>
-          <div onClick={this.toggle}>Question 2</div>
-          <div onClick={this.toggle}>Question 3</div>
-          <div onClick={this.toggle}>Question 4</div>
-        </DropdownMenu>
-      </Dropdown>
-           	<p></p>
-			<form className='questionForm'> 
-					<input
-						className='questionBox'
-								type='text'
-								placeholder='Write Answer here...'
-								/*value={this.getstate.question}*/
-/*              	onChange={event => this.setState(byPropKey('password', event.target.value))}*/
-					/>
-					<div className='extras'>
-						<h5>Tokens </h5>
-						<input
-							className='tokens'
-							type='number'
-							/*value={this.getstate.numTokens}*/
-							placeholder='Pledge tokens'
+  handleChange(event) {
+  	this.setState({value: event.target.value});
+  };
+
+  handleSubmit(event) {
+  	alert('your fav fruit is '  + this.state.value);
+  	// FUNCTIONALITY (BY PRESSING SUBMIT BUTTON) GOES HERE!
+  	// event.preventDefault() prevents the page from reloading
+  	event.preventDefault();
+  };
+
+  render() {
+	return (
+		<div className='mainBox'>
+      <div className='headerBox'>
+        <div className='linksParentBox'>
+          <div className='linkBox'>
+            <a href="signin" className='href'>Sign In</a>
+          </div> 
+          <div className='linkBox'>
+            <a href="signup" className='href'> Sign Up</a>
+          </div>
+          <div className='linkBox'>
+            <a href="/" className='href'>Home</a>
+          </div>           
+          <div className='linkBox'>
+            <a href="askquestion" className='href'> Ask Question</a>
+          </div>
+          <div className='linkBox'v>
+            <a href="answerquestion" className='href'> Answer Question</a>
+          </div>
+          <div className='linkBox'>
+            <a href="pledgetokens" className='href'> Pledge Tokens</a>
+          </div>
+        </div>
+      </div>
+			<div className='answQBox'>
+				<div> 
+					<form className='answer_parentBox' onSubmit={this.handleSubmit}>
+						<label className='labelBox'>
+							<h4 className='title1'>Select a question to answer</h4>
+              <div className='select_parentBox'>
+							 <select 
+                  className='selectBox'
+                  value={this.state.value} 
+                  onChange={this.handleChange}
+                >
+							 	<option value="grapefruit">grapefruit</option>
+							 	<option value="lime">lime</option>
+							 	<option value="coconut">coconut</option>
+							 	<option value="mango">mango</option>
+							 </select>
+              </div>
+						</label>
+						<input 
+              className='answerBox'
+							type='text' 
+							placeholder='Write answer here'
+							onChange={event=>this.setState({answer: event.target.value})}
 						/>
-						<h5>Resolve Date </h5>
-						<input
-							className='resolveDate'
-							type='date'
-							placeholder='Resolve date'
-											/*value={this.getstate.resolveDate}*/
-						/>
-					</div>
-					<button
-						className='submitButton'
-						type='submit'
-						/*onClick={() => this.}*/
-					>
-					Validate
-					</button>
-					<button
-						className='submitButton'
-						type='submit'
-						/*onClick={() => this.}*/
-					>
-					Submit
-					</button>
-				</form>
-				
+						<button
+							className='submitButton1'
+       						type='submit'
+       						value='Submit'
+       						onClick={this.handleSubmit}
+       					>
+       					Submit
+       					</button>
+					</form>
+				</div>
 			</div>
-      )
-   }
+		</div>
+	)
+	}
 }
+
+
+
+
+// import React, { Component } from 'react'
+// import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
+// import { Button } from 'reactstrap';
+// import GithubUsers from './helpers/GithubUsers';
+// import ReactDOM from 'react-dom';
+// import firebase from 'firebase';
+
+// const INITIAL_STATE = {
+//   selectedQuestionID : -1,
+//   askerID : -1,
+//   tokensInEscrow : 0,
+//   resolveDate : '',
+//   selectedQuestionText : '',
+//   currentAnswerList : [],
+//   proposedAnswer : '',
+//   error : null,
+// };
+
+// export default class AnswerQuestion extends Component {
+//   constructor(props) {
+// 		super(props);
+// 		this.toggle = this.toggle.bind(this);
+//     this.state = {
+//       dropdownOpen: false
+//     };
+
+//     // Parsing available questions to answer with Firebase:
+//     var database = firebase.database();
+//     var answerableInds = [];
+//     var answerable = [];
+//     database.ref('/questions/unresolved').once("value").then(function(snapshot) {
+//       var dict = snapshot.val();
+//       for (var key in dict) {
+//         answerableInds.push(dict[key]);
+//       }
+
+//       for (var ind in answerableInds) {
+//         database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
+//           var qInfo = snapshot.val();
+//           console.log(qInfo);
+//           answerable.push(qInfo); // Creating array of answerable questions.
+//         });
+//       }
+
+
+//     });
+//   }
+//   onSubmit = (event) => {
+//     const {
+//       selectedQuestionID,
+//       askerID,
+//       tokensInEscrow,
+//       resolveDate,
+//       selectedQuestionText,
+//       currentAnswerList,
+//       proposedAnswer,
+//       error,
+//     } = this.state;
+
+//     event.preventDefault();
+
+//   	/*FIREBASE STUFF GOES HERE*/
+//   	var database = firebase.database();
+
+//   	var user = firebase.auth().currentUser;
+//   	var currentUserID;
+
+//   	database.ref('users/emailsToIDs/' + user.email).once("value").then(function(snapshot) {
+//   		currentUserID = Number(snapshot.val());
+
+//       if (currentUserID === askerID) {
+//         // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
+//       }
+//       else {
+//         database.ref('/questions/questionData/' + selectedQuestionID + '/answers').once("value").then(function(snapshot) {
+//           // Do some stuff with parsing and attaching to answers array.
+//           // Need to deal with answer IDs, and other such things.
+//           // See User storage and question storage for examples.
+//           if(!snapshot.exists()) {
+//             database.ref('/questions/questionData' + selectedQuestionID + '/answers').set({
+//               answerCount : 1,
+//               answerData : {}
+//             });
+//             database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/0').set({
+//               answererID : currentUserID,
+//               answerText : proposedAnswer,
+//               tokensAwarded : 0
+//             });
+//           }
+//           else {
+//             var newAnswerID;
+//             database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
+//               newAnswerID = Number(snapshot.val());
+//               database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
+//               database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
+//                 answererID : currentUserID,
+//                 answerText : proposedAnswer,
+//                 tokensAwarded : 0
+//               });
+//             });
+//           }
+//         });
+//       }
+//   	});
+
+//   	database.ref('/questions/')
+
+//   }
+
+// 	toggle() {
+//     this.setState({
+//       dropdownOpen: !this.state.dropdownOpen
+// 		});
+// 	ReactDOM.render(
+// 		<div>
+// 		<GithubUsers label="GitHub users (Async with fetch.js)" />	
+// 		</div>
+// 	);
+//   }
+	
+//    render () {                                   
+//       return (
+//         <div className='mainBox'>
+//         	<h1> Answer a question! </h1>
+// 				<Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+//         <DropdownToggle
+//           tag="span"
+//           onClick={this.toggle}
+//           data-toggle="dropdown"
+//           aria-expanded={this.state.dropdownOpen}
+//         >
+//           List of Questions
+//         </DropdownToggle>
+//         <DropdownMenu>
+//           <div onClick={this.toggle}>Question 1</div>
+//           <div onClick={this.toggle}>Question 2</div>
+//           <div onClick={this.toggle}>Question 3</div>
+//           <div onClick={this.toggle}>Question 4</div>
+//         </DropdownMenu>
+//       </Dropdown>
+//            	<p></p>
+// 			<form className='questionForm'> 
+// 					<input
+// 						className='questionBox'
+// 								type='text'
+// 								placeholder='Write Answer here...'
+// 								/*value={this.getstate.question}*/
+// /*              	onChange={event => this.setState(byPropKey('password', event.target.value))}*/
+// 					/>
+// 					<div className='extras'>
+// 						<h5>Tokens </h5>
+// 						<input
+// 							className='tokens'
+// 							type='number'
+// 							/*value={this.getstate.numTokens}*/
+// 							placeholder='Pledge tokens'
+// 						/>
+// 						<h5>Resolve Date </h5>
+// 						<input
+// 							className='resolveDate'
+// 							type='date'
+// 							placeholder='Resolve date'
+// 											/*value={this.getstate.resolveDate}*/
+// 						/>
+// 					</div>
+// 					<button
+// 						className='submitButton'
+// 						type='submit'
+// 						/*onClick={() => this.}*/
+// 					>
+// 					Validate
+// 					</button>
+// 					<button
+// 						className='submitButton'
+// 						type='submit'
+// 						/*onClick={() => this.}*/
+// 					>
+// 					Submit
+// 					</button>
+// 				</form>
+				
+// 			</div>
+//       )
+//    }
+// }

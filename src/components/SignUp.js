@@ -132,40 +132,59 @@ export default class SignUp extends Component {
 
     return (
       <div className='mainBox'>
-      <h1>Sign up Here!</h1>
-      <form className='formBox' onSubmit={this.onSubmit}>
-        <input
-          className='inputField'
-          value={username}
-          onChange={event => this.setState(byPropKey('username', event.target.value))}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          className='inputField'
-          value={email}
-          onChange={event => this.setState(byPropKey('email', event.target.value))}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          className='inputField'
-          value={passwordOne}
-          onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          className='inputField'
-          value={passwordTwo}
-          onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        <button className='submitButton' type="submit">
-          Sign Up
-        </button>
-      </form>
+        <div className='headerBox'>
+          <div className='linksParentBox'>
+            <div className='linkBox'>
+              <a href="signin" className='href'>Sign In</a>
+            </div> 
+            <div className='linkBox'>
+              <a href="askquestion" className='href'> Ask Question</a>
+            </div>
+            <div className='linkBox'>
+              <a href="/" className='href'> Home</a>
+            </div>            
+            <div className='linkBox'v>
+              <a href="answerquestion" className='href'> Answer Question</a>
+            </div>
+            <div className='linkBox'>
+              <a href="pledgetokens" className='href'> Pledge Tokens</a>
+            </div>
+          </div>
+        </div>      
+        <h1 className='title1'>Sign up</h1>
+        <form className='formBox' onSubmit={this.onSubmit}>
+          <input
+            className='inputField'
+            value={username}
+            onChange={event => this.setState(byPropKey('username', event.target.value))}
+            type="text"
+            placeholder="Full Name"
+          />
+          <input
+            className='inputField'
+            value={email}
+            onChange={event => this.setState(byPropKey('email', event.target.value))}
+            type="text"
+            placeholder="Email Address"
+          />
+          <input
+            className='inputField'
+            value={passwordOne}
+            onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+            type="password"
+            placeholder="Password"
+          />
+          <input
+            className='inputField'
+            value={passwordTwo}
+            onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+            type="password"
+            placeholder="Confirm Password"
+          />
+          <button className='submitButton' type="submit">
+            Sign Up
+          </button>
+        </form>
       </div>
     )
   }

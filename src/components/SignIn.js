@@ -70,7 +70,26 @@ class SignIn extends Component {
 
       return (
         <div className='mainBox'>
-          <h1>Sign in Here!</h1>
+          <div className='headerBox'>
+            <div className='linksParentBox'>
+              <div className='linkBox'>
+                <a href="signup" className='href'> Sign Up</a>
+              </div>             
+              <div className='linkBox'>
+                <a href="askquestion" className='href'> Ask Question</a>
+              </div>
+              <div className='linkBox'>
+                <a href="/" className='href'>Home</a>
+              </div> 
+              <div className='linkBox'v>
+                <a href="answerquestion" className='href'> Answer Question</a>
+              </div>
+              <div className='linkBox'>
+                <a href="pledgetokens" className='href'> Pledge Tokens</a>
+              </div>
+            </div>
+          </div>
+          <h1 className='title1'>Sign in</h1>
           <form className='formBox' onSubmit={this.onSubmit}>
             <input 
               className='inputField'
@@ -102,27 +121,5 @@ class SignIn extends Component {
    }
 }
 export default withRouter(SignIn)
-/*export default Signin*/
 
 
-
-/*  render () {                                   
-      return (
-        <div>
-             <div id='signinContainer'>
-                  <form id='form' onSubmit={this.onSubmit}>       
-                      <input className='input' type="text"   
-                       placeholder="First Name"/>
-                      <input className='input' type="text"  
-                       placeholder="Last Name"/>          
-                      <input className='input' type="text"  
-                       placeholder="Email"/>          
-                      <input className='input' type="password" 
-                       placeholder="Password"/>
-                      <button id='submit'>Sign Up</button>
-                  </form>
-             </div>
-        </div>
-      )
-   }
-}*/

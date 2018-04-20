@@ -20,7 +20,7 @@ export default class AskQuestion extends Component {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
       } else {
-        window.location.href = '/signin';
+        window.location.href = '/';
       }
     });
   }
