@@ -97,6 +97,8 @@ export default class SignUp extends Component {
           }
           //////////
         });
+        window.location.href = '/signin';
+
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -136,13 +138,13 @@ export default class SignUp extends Component {
           <div className='linksParentBox'>
             <div className='linkBox'>
               <a href="signin" className='href'>Sign In</a>
-            </div> 
+            </div>
             <div className='linkBox'>
               <a href="askquestion" className='href'> Ask Question</a>
             </div>
             <div className='linkBox'>
               <a href="/" className='href'> Home</a>
-            </div>            
+            </div>
             <div className='linkBox'v>
               <a href="answerquestion" className='href'> Answer Question</a>
             </div>
@@ -150,7 +152,7 @@ export default class SignUp extends Component {
               <a href="pledgetokens" className='href'> Pledge Tokens</a>
             </div>
           </div>
-        </div>      
+        </div>
         <h1 className='title1'>Sign up</h1>
         <form className='formBox' onSubmit={this.onSubmit}>
           <input
