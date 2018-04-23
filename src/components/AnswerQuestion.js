@@ -289,7 +289,15 @@ const INITIAL_STATE = {
   proposedAnswer : '',
   error : null,
   answerableCarry : [],
+  askerIDArr : [],
+  correctAnswerArr : [],
+  resolveDateArr : [],
+  resolvedArr : [],
+  textArr : [],
+  tokensPledgedArr : [],
 };
+
+var globalAnswers = [];
 
 export default class AnswerQuestion extends Component {
   constructor(props) {
@@ -305,6 +313,12 @@ export default class AnswerQuestion extends Component {
     var database = firebase.database();
     var answerableInds = [];
     var answerable = [];
+    var a1 = [];
+    var a2 = [];
+    var a3 = [];
+    var a4 = [];
+    var a5 = [];
+    var a6 = [];
     var temp=['s']
     database.ref('/questions/unresolved').once("value").then(function(snapshot) {
       var dict = snapshot.val();
@@ -314,24 +328,67 @@ export default class AnswerQuestion extends Component {
       }
       console.log('check2');
 
-      for (var ind in answerableInds) {
-        database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
-          var qInfo = snapshot.val();
-          console.log(qInfo);
-          answerable.push(qInfo);
-          temp.push(qInfo); // Creating array of answerable questions.
-          // this.state.test.push(qInfo);
-          console.log('printing1');
-          console.log(temp);
-        });
-      }
-    });
-    console.log('check4');
-    console.log(answerable);
+      database.ref('/questions/questionData').once("value").then(function(snapshot) {
+        console.log("BIG TEST: " + snapshot.val()[0].text);
 
-    this.state.answerableCarry = answerable;
-    console.log('check5')
-    console.log(((this.state.answerableCarry)[0])['text']);
+        var snap = snapshot.val();
+
+        for (var ind in answerableInds) {
+          var qInfo = snap[ind];
+          globalAnswers.push(qInfo);
+        }
+
+        console.log(globalAnswers);
+        console.log(globalAnswers[0]);
+        console.log(globalAnswers[0].text);
+      });
+
+      // for (var ind in answerableInds) {
+      //   database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
+      //     var qInfo = snapshot.val();
+      //     console.log(qInfo);
+      //     answerable.push(qInfo);
+      //     globalAnswers.push(qInfo);
+      //     a1.push(qInfo.askerID);
+      //     a2.push(qInfo.correctAnswer);
+      //     a3.push(qInfo.resolveDate);
+      //     a4.push(qInfo.resolved);
+      //     a5.push(qInfo.text);
+      //     a6.push(qInfo.tokensPledged);
+      //     temp.push(qInfo); // Creating array of answerable questions.
+      //     // this.state.test.push(qInfo);
+      //     console.log('printing1');
+      //     console.log(temp);
+      //   });
+      // }
+    });
+
+
+    // console.log('check4');
+    // console.log(answerable);
+
+    // this.state.answerableCarry = answerable;
+    // this.state.askerIDArr = a1;
+    // this.state.correctAnswerArr = a2;
+    // this.state.resolveDateArr = a3;
+    // this.state.resolvedArr = a4;
+    // this.state.textArr = a5;
+    // this.state.tokensPledgedArr = a6;
+    // console.log('check5')
+    // console.log(this.state.askerIDArr);
+    // console.log(this.state.correctAnswerArr);
+    // console.log(this.state.resolveDateArr);
+    // console.log(this.state.resolvedArr);
+    // console.log(this.state.textArr);
+    // console.log(this.state.tokensPledgedArr);
+    // console.log((this.state.askerIDArr)[0]);
+    // console.log(this.state.correctAnswerArr[0]);
+    // console.log(this.state.resolveDateArr[0]);
+    // console.log(this.state.resolvedArr[0]);
+    // console.log(this.state.textArr[0]);
+    // console.log(this.state.tokensPledgedArr[0]);
+    // var testArr = this.state.textArr;
+    // console.log(testArr[0]);
     // console.log(temp[1].text);
 
     // console.log('printing');
