@@ -69,15 +69,7 @@ export default class AskQuestion extends Component {
     event.preventDefault();
 
     database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
-      // window.location.href = '/' + String(snapshot.exists());
-
-      console.log("wtf");
-
       userID = snapshot.val().userID;
-
-      console.log(userID);
-
-      
 
       database.ref('/questions/questionCount').once("value").then(function(snapshot) {
         if (!snapshot.exists()) {
