@@ -288,13 +288,6 @@ const INITIAL_STATE = {
   currentAnswerList : [],
   proposedAnswer : '',
   error : null,
-  answerableCarry : [],
-  askerIDArr : [],
-  correctAnswerArr : [],
-  resolveDateArr : [],
-  resolvedArr : [],
-  textArr : [],
-  tokensPledgedArr : [],
 };
 
 var globalAnswers = [];
@@ -307,19 +300,20 @@ export default class AnswerQuestion extends Component {
       INITIAL_STATE,
       test: [],
       dropdownOpen: false
-    };    
+    };
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("email: " + firebase.auth().currentUser.email);
+      } else {
+        window.location.href = '/signin';
+      }
+    });    
 
     // Parsing available questions to answer with Firebase:
     var database = firebase.database();
     var answerableInds = [];
-    var answerable = [];
-    var a1 = [];
-    var a2 = [];
-    var a3 = [];
-    var a4 = [];
-    var a5 = [];
-    var a6 = [];
-    var temp=['s']
+
     database.ref('/questions/unresolved').once("value").then(function(snapshot) {
       var dict = snapshot.val();
       console.log('check1');
@@ -342,63 +336,39 @@ export default class AnswerQuestion extends Component {
         console.log(globalAnswers[0]);
         console.log(globalAnswers[0].text);
       });
-
-      // for (var ind in answerableInds) {
-      //   database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
-      //     var qInfo = snapshot.val();
-      //     console.log(qInfo);
-      //     answerable.push(qInfo);
-      //     globalAnswers.push(qInfo);
-      //     a1.push(qInfo.askerID);
-      //     a2.push(qInfo.correctAnswer);
-      //     a3.push(qInfo.resolveDate);
-      //     a4.push(qInfo.resolved);
-      //     a5.push(qInfo.text);
-      //     a6.push(qInfo.tokensPledged);
-      //     temp.push(qInfo); // Creating array of answerable questions.
-      //     // this.state.test.push(qInfo);
-      //     console.log('printing1');
-      //     console.log(temp);
-      //   });
-      // }
     });
-
-
-    // console.log('check4');
-    // console.log(answerable);
-
-    // this.state.answerableCarry = answerable;
-    // this.state.askerIDArr = a1;
-    // this.state.correctAnswerArr = a2;
-    // this.state.resolveDateArr = a3;
-    // this.state.resolvedArr = a4;
-    // this.state.textArr = a5;
-    // this.state.tokensPledgedArr = a6;
-    // console.log('check5')
-    // console.log(this.state.askerIDArr);
-    // console.log(this.state.correctAnswerArr);
-    // console.log(this.state.resolveDateArr);
-    // console.log(this.state.resolvedArr);
-    // console.log(this.state.textArr);
-    // console.log(this.state.tokensPledgedArr);
-    // console.log((this.state.askerIDArr)[0]);
-    // console.log(this.state.correctAnswerArr[0]);
-    // console.log(this.state.resolveDateArr[0]);
-    // console.log(this.state.resolvedArr[0]);
-    // console.log(this.state.textArr[0]);
-    // console.log(this.state.tokensPledgedArr[0]);
-    // var testArr = this.state.textArr;
-    // console.log(testArr[0]);
-    // console.log(temp[1].text);
-
-    // console.log('printing');
-    // this.state.test.push(temp[0].text);
-    // console.log(this.state.test);
-
   }
 
+ createSelectItems() {
+  console.log('answerable2 is');
+  let lst = this.state.answerableCarry;
+  var k = lst;
+  console.log(k);
+  console.log(this.state.answerableCarry);
+  console.log(JSON.stringify(this.state.answerableCarry));
+  let answerable=[
+    'What is the air speed velocity of an unladen swallow?, Tokens: 99, ResolveBy: 4/23/2018', 
+    'I\'m a student and I need a new laptop. Should I purchase a Mac or PC and why?, Tokens: 24, ResolveBy: 5/24/2018', 
+    'question3, Tokens: 39, ResolveBy: 6/25/2018', 
+    'question4, Tokens: 50, ResolveBy: 7/26/2018', 
+    'question5, Tokens: 75, ResolveBy: 8/27/2018'];
+  // console.log(this.state.a1);
+  // console.log(this.state.answerable);
+  // let l = this.state.test_list.length;
+  let l = 4;
+  let items=[];         
+     for (let i = 0; i <= l; i++) {             
+          items.push(<option key={i} value={answerable[i]}>{answerable[i]}</option>);   
+          //here I will be creating my options dynamically based on
+          //what props are currently passed to the parent component
+     }
+     return items;
+ }
 
-
+onDropdownSelected(e) {
+    console.log("THE VAL", e.target.value);
+    //here you will see the current selected value of the select input
+}   
 
   onSubmit = (event) => {
     const {
@@ -410,7 +380,6 @@ export default class AnswerQuestion extends Component {
       currentAnswerList,
       proposedAnswer,
       error,
-      answerableCarry,
     } = this.state;
 
     event.preventDefault();
@@ -473,69 +442,164 @@ export default class AnswerQuestion extends Component {
     </div>
   );
   }
-  
-   render () {                                   
-      return (
-        <div className='mainBox'>
-          <h1> Answer a question! </h1>
-        <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-        <DropdownToggle
-          tag="span"
-          onClick={this.toggle}
-          data-toggle="dropdown"
-          aria-expanded={this.state.dropdownOpen}
-        >
-          List of Questions
-        </DropdownToggle>
-        <DropdownMenu>
-          <div onClick={this.toggle}>Question 1</div>
-          <div onClick={this.toggle}>Question 2</div>
-          <div onClick={this.toggle}>Question 3</div>
-          <div onClick={this.toggle}>Question 4</div>
-        </DropdownMenu>
-      </Dropdown>
-            <p></p>
-      <form className='questionForm'> 
-          <input
-            className='questionBox'
-                type='text'
-                placeholder='Write Answer here...'
-                /*value={this.getstate.question}*/
-/*                onChange={event => this.setState(byPropKey('password', event.target.value))}*/
-          />
-          <div className='extras'>
-            <h5>Tokens </h5>
-            <input
-              className='tokens'
-              type='number'
-              /*value={this.getstate.numTokens}*/
-              placeholder='Pledge tokens'
-            />
-            <h5>Resolve Date </h5>
-            <input
-              className='resolveDate'
-              type='date'
-              placeholder='Resolve date'
-                      /*value={this.getstate.resolveDate}*/
-            />
+
+  render() {
+    return (
+      <div className='mainBox'>
+        <div className='headerBox'>
+          <div className='linksParentBox'>
+            <div className='linkBox'>
+              <a href="signin" className='href'>Sign In</a>
+            </div> 
+            <div className='linkBox'>
+              <a href="signup" className='href'> Sign Up</a>
+            </div>
+            <div className='linkBox'>
+              <a href="/" className='href'>Home</a>
+            </div>           
+            <div className='linkBox'>
+              <a href="askquestion" className='href'> Ask Question</a>
+            </div>
+            <div className='linkBox'>
+              <a href="pledgetokens" className='href'> Pledge Tokens</a>
+            </div>
           </div>
-          <button
-            className='submitButton'
-            type='submit'
-            /*onClick={() => this.}*/
-          >
-          Validate
-          </button>
-          <button
-            className='submitButton'
-            type='submit'
-            /*onClick={() => this.}*/
-          >
-          Submit
-          </button>
-        </form>
-        
+        </div>
+        <div className='answQBox'>
+          <div> 
+            <form className='answer_parentBox' onSubmit={this.handleSubmit}>
+            <label className='labelBox'>
+              <h4 className='title1'>Select a question to answer</h4>
+              <div className='select_parentBox'>
+                <select className='selectBox' type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
+                  {this.createSelectItems()}
+                </select>              
+
+{/*                <select 
+                  className='selectBox'
+                  value={this.state.value} 
+                  onChange={this.handleChange}
+                >
+                  {this.countryData.map((e, key) => {
+                    return <option key={key} value={e.value}>{e.name}</option>
+                  })}
+                  <option value="mango">mango</option>
+                </select>*/}
+              </div>
+            </label>
+            <div className='answerBox'>
+              <input 
+                className='answerBox1'
+                type='text' 
+                placeholder='Write answer here'
+                onChange={event=>this.setState({answer: event.target.value})}
+              />
+            </div>
+            <button
+              className='submitButton1'
+              type='submit'
+              value='Submit'
+              onClick={this.handleSubmit}
+            >
+            Submit
+            </button>
+            </form>
+          </div>
+        </div>
       </div>
-      )
-   }
-}
+    )
+  }
+};
+  
+//    render () {                                   
+//       return (
+//         <div className='mainBox'>
+//           <div className='headerBox'>
+//             <div className='linksParentBox'>
+//               <div className='linkBox'>
+//                 <a href="signin" className='href'>Sign In</a>
+//               </div> 
+//               <div className='linkBox'>
+//                 <a href="signup" className='href'> Sign Up</a>
+//               </div>
+//               <div className='linkBox'>
+//                 <a href="/" className='href'>Home</a>
+//               </div>           
+//               <div className='linkBox'>
+//                 <a href="askquestion" className='href'> Ask Question</a>
+//               </div>
+//               <div className='linkBox'v>
+//                 <a href="answerquestion" className='href'> Answer Question</a>
+//               </div>
+//               <div className='linkBox'>
+//                 <a href="pledgetokens" className='href'> Pledge Tokens</a>
+//               </div>
+//             </div>
+//           </div>        
+//           <h4 className='title1'> Answer a question! </h4>
+//           <div className='select_parentBox'>
+//            <select className='selectBox' type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
+//             {this.createSelectItems()}
+//            </select>
+//           </div>          
+//         <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+//         <DropdownToggle
+//           tag="span"
+//           onClick={this.toggle}
+//           data-toggle="dropdown"
+//           aria-expanded={this.state.dropdownOpen}
+//         >
+//           List of Questions
+//         </DropdownToggle>
+//         <DropdownMenu>
+//           <div onClick={this.toggle}>Question 1</div>
+//           <div onClick={this.toggle}>Question 2</div>
+//           <div onClick={this.toggle}>Question 3</div>
+//           <div onClick={this.toggle}>Question 4</div>
+//         </DropdownMenu>
+//       </Dropdown>
+//             <p></p>
+//       <form className='questionForm'> 
+//           <input
+//             className='questionBox'
+//                 type='text'
+//                 placeholder='Write Answer here...'
+//                 /*value={this.getstate.question}*/
+// /*                onChange={event => this.setState(byPropKey('password', event.target.value))}*/
+//           />
+//           <div className='extras'>
+//             <h5>Tokens </h5>
+//             <input
+//               className='tokens'
+//               type='number'
+//               /*value={this.getstate.numTokens}*/
+//               placeholder='Pledge tokens'
+//             />
+//             <h5>Resolve Date </h5>
+//             <input
+//               className='resolveDate'
+//               type='date'
+//               placeholder='Resolve date'
+//                       /*value={this.getstate.resolveDate}*/
+//             />
+//           </div>
+//           <button
+//             className='submitButton'
+//             type='submit'
+//             /*onClick={() => this.}*/
+//           >
+//           Validate
+//           </button>
+//           <button
+//             className='submitButton'
+//             type='submit'
+//             /*onClick={() => this.}*/
+//           >
+//           Submit
+//           </button>
+//         </form>
+        
+//       </div>
+//       )
+//    }
+// }

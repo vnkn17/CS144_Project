@@ -7,6 +7,9 @@ import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
 import { Button } from 'reactstrap';
 import GithubUsers from './helpers/GithubUsers';
 import ReactDOM from 'react-dom';
+import firebase from 'firebase';
+
+require('firebase');
 
 export default class PledgeTokens extends Component {
 
@@ -26,6 +29,17 @@ export default class PledgeTokens extends Component {
       },
       result: ''
     };
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("email: " + firebase.auth().currentUser.email);
+      } else {
+        window.location.href = '/signin';
+      }
+    });
+
+
+    var database = firebase.database();
 
     this.handleAnswerSelected = this.handleAnswerSelected.bind(this);
   }
@@ -123,17 +137,38 @@ export default class PledgeTokens extends Component {
 
   renderResult() {
     return (
-      <Result quizResult={this.state.result} />
+      <Result className='title4' quizResult={this.state.result} />
     );
   }
 
   render() {
     return (
-      <div className="PledgeTokens">
-        <div className="App-header">
-          <h2>QuesToken</h2>
+      <div className='mainBox1'>
+        <div className='headerBox'>
+          <div className='linksParentBox'>
+            <div className='linkBox'>
+              <a href="signin" className='href'>Sign In</a>
+            </div> 
+            <div className='linkBox'>
+              <a href="signup" className='href'> Sign Up</a>
+            </div>
+            <div className='linkBox'>
+              <a href="/" className='href'>Home</a>
+            </div>           
+            <div className='linkBox'>
+              <a href="askquestion" className='href'> Ask Question</a>
+            </div>
+            <div className='linkBox'>
+              <a href="answerquestion" className='href'> Answer Question</a>
+            </div>
+          </div>
         </div>
-        {this.state.result ? this.renderResult() : this.renderQuiz()}
+        <div className='font'>
+          {this.state.result ? this.renderResult() : this.renderQuiz()}
+        </div>
+        <button className='submitButton1' type='submit'>
+            Submit
+        </button>        
       </div>
     );
   }

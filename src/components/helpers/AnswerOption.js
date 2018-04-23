@@ -3,9 +3,9 @@ import React, { Component }  from 'react';
 function AnswerOption(props) {
 
   return (
-    <li className="answerOption">
+    <li className="white">
       <input
-        className='tokens'
+        className='black'
         type='number'
         /*value={this.getstate.numTokens}*/
         placeholder='Pledge tokens'

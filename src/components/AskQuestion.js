@@ -159,7 +159,26 @@ export default class AskQuestion extends Component {
 
     return (
       <div className='mainBox'>
-      	<h1> Post a question! </h1>
+        <div className='headerBox'>
+          <div className='linksParentBox'>
+            <div className='linkBox'>
+              <a href="signin" className='href'>Sign In</a>
+            </div> 
+            <div className='linkBox'>
+              <a href="signup" className='href'> Sign Up</a>
+            </div>
+            <div className='linkBox'>
+              <a href="/" className='href'>Home</a>
+            </div>           
+            <div className='linkBox'>
+              <a href="answerquestion" className='href'> Answer Question</a>
+            </div>
+            <div className='linkBox'>
+              <a href="pledgetokens" className='href'> Pledge Tokens</a>
+            </div>
+          </div>
+        </div>     
+      	<h1 className='title1'> Post a question! </h1>
       	<form className='questionForm' onSubmit = {this.onSubmit}>
       		<input
       			className='questionBox'
@@ -169,7 +188,7 @@ export default class AskQuestion extends Component {
             onChange={event => this.setState(byPropKey('question', event.target.value))}
       		/>
       		<div className='extras'>
-      			<h5>Tokens </h5>
+      			<h5 className='title2'>Tokens </h5>
       			<input
       				className='tokens'
       				type='number'
@@ -177,7 +196,7 @@ export default class AskQuestion extends Component {
       				placeholder='Pledge tokens'
               onChange={event => this.setState(byPropKey('numTokens', event.target.value))}
       			/>
-      			<h5>Resolve Date </h5>
+      			<h5 className='title2'>Resolve Date </h5>
       			<input
       				className='resolveDate'
       				type='date'
@@ -186,15 +205,11 @@ export default class AskQuestion extends Component {
               onChange={event => this.setState(byPropKey('resolveDate', event.target.value))}
       			/>
       		</div>
-      		
-
-
       		<button className='submitButton' type='submit'>
       		  Submit
       		</button>
       	</form>
-
-        <button onClick={this.logoutClick}>Log Out User</button>
+        <button className='submitButton' onClick={this.logoutClick}>Log Out User</button>
       </div>
     )
   }
