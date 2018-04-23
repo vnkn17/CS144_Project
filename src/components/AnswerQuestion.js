@@ -313,6 +313,7 @@ export default class AnswerQuestion extends Component {
         answerableInds.push(dict[key]);
       }
       console.log('check2');
+      console.log(answerable);
 
       for (var ind in answerableInds) {
         database.ref('/questions/questionData/' + ind).once("value").then(function(snapshot) {
@@ -342,9 +343,17 @@ export default class AnswerQuestion extends Component {
 
  createSelectItems() {
   console.log('answerable2 is');
+  let lst = this.state.answerableCarry;
+  var k = lst;
+  console.log(k);
   console.log(this.state.answerableCarry);
   console.log(JSON.stringify(this.state.answerableCarry));
-  let answerable=['question1', 'question2', 'question3', 'question4', 'question5'];
+  let answerable=[
+    'What is the air speed velocity of an unladen swallow?, Tokens: 99, ResolveBy: 4/23/2018', 
+    'I\'m a student and I need a new laptop. Should I purchase a Mac or PC and why?, Tokens: 24, ResolveBy: 5/24/2018', 
+    'question3, Tokens: 39, ResolveBy: 6/25/2018', 
+    'question4, Tokens: 50, ResolveBy: 7/26/2018', 
+    'question5, Tokens: 75, ResolveBy: 8/27/2018'];
   // console.log(this.state.a1);
   // console.log(this.state.answerable);
   // let l = this.state.test_list.length;

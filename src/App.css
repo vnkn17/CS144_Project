@@ -271,6 +271,7 @@ code {
   display: flex;
   width: 80%;
   align-items: center;
+  font-weight: 800;
 }
 
 .selectBox {
@@ -294,7 +295,7 @@ code {
   padding-bottom: 20px; 
   flex-direction: column;
   font-family: Roboto;
-  font-weight: 600;
+  font-weight: 800;
   text-overflow: break-word;
 }
 
@@ -310,6 +311,7 @@ code {
   color: black;
   cursor: pointer;
   font-family: Roboto; 
+  font-weight: 600;
 }
 
 .submitButton1:hover {
