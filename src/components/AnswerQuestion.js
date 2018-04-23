@@ -288,9 +288,19 @@ const INITIAL_STATE = {
   currentAnswerList : [],
   proposedAnswer : '',
   error : null,
+  answerableCarry : [],
 };
 
 var globalAnswers = [];
+
+function waitUntilDefined() {
+  if (typeof globalAnswers !== 'undefined' && typeof globalAnswers[0] != 'undefined') {
+    return;
+  }
+  else {
+    setTimeout(waitUntilDefined, 50);
+  }
+}
 
 export default class AnswerQuestion extends Component {
   constructor(props) {
@@ -309,7 +319,9 @@ export default class AnswerQuestion extends Component {
         window.location.href = '/signin';
       }
     });    
+  }
 
+  createSelectItems() {
     // Parsing available questions to answer with Firebase:
     var database = firebase.database();
     var answerableInds = [];
@@ -334,36 +346,41 @@ export default class AnswerQuestion extends Component {
 
         console.log(globalAnswers);
         console.log(globalAnswers[0]);
-        console.log(globalAnswers[0].text);
+        console.log("lol: " + globalAnswers[0].text);
+
+        // this.state.answerableCarry = globalAnswers;
+
+        console.log('answerable2 is');
+        // let lst = this.state.answerableCarry;
+        // var k = lst;
+        // console.log(k);
+        // console.log(this.state.answerableCarry);
+        console.log("answerableCarry:\n" + JSON.stringify(globalAnswers));
+        // let answerable=[
+        //   'What is the air speed velocity of an unladen swallow?, Tokens: 99, ResolveBy: 4/23/2018', 
+        //   'I\'m a student and I need a new laptop. Should I purchase a Mac or PC and why?, Tokens: 24, ResolveBy: 5/24/2018', 
+        //   'question3, Tokens: 39, ResolveBy: 6/25/2018', 
+        //   'question4, Tokens: 50, ResolveBy: 7/26/2018', 
+        //   'question5, Tokens: 75, ResolveBy: 8/27/2018'];
+        // // console.log(this.state.a1);
+        // // console.log(this.state.answerable);
+        // // let l = this.state.test_list.length;
+        let answerable = globalAnswers;
+        let l = 4;
+        let items=[];
+        var i = 0         
+        for (var item in globalAnswers) {  
+            console.log(globalAnswers[item]);           
+            items.push(<option key={i} value={globalAnswers[item].text}>{globalAnswers[item].text}</option>);
+            i++;
+            //here I will be creating my options dynamically based on
+            //what props are currently passed to the parent component
+        }
+        console.log(items);
+        return items;
       });
     });
   }
-
- createSelectItems() {
-  console.log('answerable2 is');
-  let lst = this.state.answerableCarry;
-  var k = lst;
-  console.log(k);
-  console.log(this.state.answerableCarry);
-  console.log(JSON.stringify(this.state.answerableCarry));
-  let answerable=[
-    'What is the air speed velocity of an unladen swallow?, Tokens: 99, ResolveBy: 4/23/2018', 
-    'I\'m a student and I need a new laptop. Should I purchase a Mac or PC and why?, Tokens: 24, ResolveBy: 5/24/2018', 
-    'question3, Tokens: 39, ResolveBy: 6/25/2018', 
-    'question4, Tokens: 50, ResolveBy: 7/26/2018', 
-    'question5, Tokens: 75, ResolveBy: 8/27/2018'];
-  // console.log(this.state.a1);
-  // console.log(this.state.answerable);
-  // let l = this.state.test_list.length;
-  let l = 4;
-  let items=[];         
-     for (let i = 0; i <= l; i++) {             
-          items.push(<option key={i} value={answerable[i]}>{answerable[i]}</option>);   
-          //here I will be creating my options dynamically based on
-          //what props are currently passed to the parent component
-     }
-     return items;
- }
 
 onDropdownSelected(e) {
     console.log("THE VAL", e.target.value);
