@@ -318,3 +318,23 @@ code {
     background-color: #008CBA; 
     color: white;
 }
+
+/* PLEDGE TOKENS */
+
+.vishal_shit {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.mainBox1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width:100%;
+  font-family: 'Roboto';
+  font-weight: 700; 
+  background-color: black;
+  color: blue;
+}
