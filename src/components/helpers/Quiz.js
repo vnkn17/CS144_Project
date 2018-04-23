@@ -29,13 +29,13 @@ function Quiz(props) {
       transitionAppear
       transitionAppearTimeout={500}
     >
-      <div key={props.questionId}>
+      <div className='white' key={props.questionId}>
         <QuestionCount
           counter={props.questionId}
           total={props.questionTotal}
         />
         <Question content={props.question} />
-        <ul className="answerOptions">
+        <ul className="black">
           {props.answerOptions.map(renderAnswerOptions)}
         </ul>
       </div>

@@ -123,7 +123,7 @@ export default class PledgeTokens extends Component {
 
   renderResult() {
     return (
-      <Result quizResult={this.state.result} />
+      <Result className='title4' quizResult={this.state.result} />
     );
   }
 
@@ -149,7 +149,12 @@ export default class PledgeTokens extends Component {
             </div>
           </div>
         </div>
-        {this.state.result ? this.renderResult() : this.renderQuiz()}
+        <div className='font'>
+          {this.state.result ? this.renderResult() : this.renderQuiz()}
+        </div>
+        <button className='submitButton1' type='submit'>
+            Submit
+        </button>        
       </div>
     );
   }

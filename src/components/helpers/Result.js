@@ -5,7 +5,7 @@ function Result(props) {
 
   return (
     <ReactCSSTransitionGroup
-      className="container result"
+      className="container_result"
       component="div"
       transitionName="fade"
       transitionEnterTimeout={800}
