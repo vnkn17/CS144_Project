@@ -129,9 +129,28 @@ export default class PledgeTokens extends Component {
 
   render() {
     return (
-      <div className="PledgeTokens">
-        <div className="App-header">
-          <h2>QuesToken</h2>
+      <div className='mainBox'>
+           <div className='headerBox'>
+             <div className='linksParentBox'>
+               <div className='linkBox'>
+                 <a href="signin" className='href'>Sign In</a>
+               </div> 
+               <div className='linkBox'>
+                 <a href="signup" className='href'> Sign Up</a>
+               </div>
+               <div className='linkBox'>
+                 <a href="/" className='href'>Home</a>
+               </div>           
+               <div className='linkBox'>
+                 <a href="askquestion" className='href'> Ask Question</a>
+               </div>
+               <div className='linkBox'>
+                 <a href="answerquestion" className='href'> Answer Question</a>
+               </div>
+               <div className='linkBox'>
+                 <a href="pledgetokens" className='href'> Pledge Tokens</a>
+               </div>
+             </div>
         </div>
         {this.state.result ? this.renderResult() : this.renderQuiz()}
       </div>
