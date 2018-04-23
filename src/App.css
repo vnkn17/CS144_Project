@@ -278,16 +278,24 @@ code {
   width: 100%;
   font-family: Roboto;
   font-weight: 700;
+  height: 63px;
+}
+
+.answerBox1 {
+  padding-bottom: 80px;
+  text-overflow: break-word;
+  overflow-wrap: break-word;
 }
 
 .answerBox {
   display: flex;
   height: 100%;
   width: 80%;
-  padding-bottom: 100px; 
+  padding-bottom: 20px; 
   flex-direction: column;
   font-family: Roboto;
   font-weight: 600;
+  text-overflow: break-word;
 }
 
 .submitButton1 {
@@ -301,6 +309,7 @@ code {
   transition-duration: 0.4s;
   color: black;
   cursor: pointer;
+  font-family: Roboto; 
 }
 
 .submitButton1:hover {

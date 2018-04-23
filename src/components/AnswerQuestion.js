@@ -331,7 +331,7 @@ export default class AnswerQuestion extends Component {
 
     this.state.answerableCarry = answerable;
     console.log('check5')
-    console.log(((this.state.answerableCarry)[0])['text']);
+    console.log(this.state.answerableCarry);
     // console.log(temp[1].text);
 
     // console.log('printing');
@@ -340,8 +340,28 @@ export default class AnswerQuestion extends Component {
 
   }
 
+ createSelectItems() {
+  console.log('answerable2 is');
+  console.log(this.state.answerableCarry);
+  console.log(JSON.stringify(this.state.answerableCarry));
+  let answerable=['question1', 'question2', 'question3', 'question4', 'question5'];
+  // console.log(this.state.a1);
+  // console.log(this.state.answerable);
+  // let l = this.state.test_list.length;
+  let l = 4;
+  let items=[];         
+     for (let i = 0; i <= l; i++) {             
+          items.push(<option key={i} value={answerable[i]}>{answerable[i]}</option>);   
+          //here I will be creating my options dynamically based on
+          //what props are currently passed to the parent component
+     }
+     return items;
+ }
 
-
+onDropdownSelected(e) {
+    console.log("THE VAL", e.target.value);
+    //here you will see the current selected value of the select input
+}   
 
   onSubmit = (event) => {
     const {
@@ -416,69 +436,164 @@ export default class AnswerQuestion extends Component {
     </div>
   );
   }
-  
-   render () {                                   
-      return (
-        <div className='mainBox'>
-          <h1> Answer a question! </h1>
-        <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-        <DropdownToggle
-          tag="span"
-          onClick={this.toggle}
-          data-toggle="dropdown"
-          aria-expanded={this.state.dropdownOpen}
-        >
-          List of Questions
-        </DropdownToggle>
-        <DropdownMenu>
-          <div onClick={this.toggle}>Question 1</div>
-          <div onClick={this.toggle}>Question 2</div>
-          <div onClick={this.toggle}>Question 3</div>
-          <div onClick={this.toggle}>Question 4</div>
-        </DropdownMenu>
-      </Dropdown>
-            <p></p>
-      <form className='questionForm'> 
-          <input
-            className='questionBox'
-                type='text'
-                placeholder='Write Answer here...'
-                /*value={this.getstate.question}*/
-/*                onChange={event => this.setState(byPropKey('password', event.target.value))}*/
-          />
-          <div className='extras'>
-            <h5>Tokens </h5>
-            <input
-              className='tokens'
-              type='number'
-              /*value={this.getstate.numTokens}*/
-              placeholder='Pledge tokens'
-            />
-            <h5>Resolve Date </h5>
-            <input
-              className='resolveDate'
-              type='date'
-              placeholder='Resolve date'
-                      /*value={this.getstate.resolveDate}*/
-            />
+
+  render() {
+    return (
+      <div className='mainBox'>
+        <div className='headerBox'>
+          <div className='linksParentBox'>
+            <div className='linkBox'>
+              <a href="signin" className='href'>Sign In</a>
+            </div> 
+            <div className='linkBox'>
+              <a href="signup" className='href'> Sign Up</a>
+            </div>
+            <div className='linkBox'>
+              <a href="/" className='href'>Home</a>
+            </div>           
+            <div className='linkBox'>
+              <a href="askquestion" className='href'> Ask Question</a>
+            </div>
+            <div className='linkBox'>
+              <a href="pledgetokens" className='href'> Pledge Tokens</a>
+            </div>
           </div>
-          <button
-            className='submitButton'
-            type='submit'
-            /*onClick={() => this.}*/
-          >
-          Validate
-          </button>
-          <button
-            className='submitButton'
-            type='submit'
-            /*onClick={() => this.}*/
-          >
-          Submit
-          </button>
-        </form>
-        
+        </div>
+        <div className='answQBox'>
+          <div> 
+            <form className='answer_parentBox' onSubmit={this.handleSubmit}>
+            <label className='labelBox'>
+              <h4 className='title1'>Select a question to answer</h4>
+              <div className='select_parentBox'>
+                <select className='selectBox' type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
+                  {this.createSelectItems()}
+                </select>              
+
+{/*                <select 
+                  className='selectBox'
+                  value={this.state.value} 
+                  onChange={this.handleChange}
+                >
+                  {this.countryData.map((e, key) => {
+                    return <option key={key} value={e.value}>{e.name}</option>
+                  })}
+                  <option value="mango">mango</option>
+                </select>*/}
+              </div>
+            </label>
+            <div className='answerBox'>
+              <input 
+                className='answerBox1'
+                type='text' 
+                placeholder='Write answer here'
+                onChange={event=>this.setState({answer: event.target.value})}
+              />
+            </div>
+            <button
+              className='submitButton1'
+              type='submit'
+              value='Submit'
+              onClick={this.handleSubmit}
+            >
+            Submit
+            </button>
+            </form>
+          </div>
+        </div>
       </div>
-      )
-   }
-}
+    )
+    }
+};
+  
+//    render () {                                   
+//       return (
+//         <div className='mainBox'>
+//           <div className='headerBox'>
+//             <div className='linksParentBox'>
+//               <div className='linkBox'>
+//                 <a href="signin" className='href'>Sign In</a>
+//               </div> 
+//               <div className='linkBox'>
+//                 <a href="signup" className='href'> Sign Up</a>
+//               </div>
+//               <div className='linkBox'>
+//                 <a href="/" className='href'>Home</a>
+//               </div>           
+//               <div className='linkBox'>
+//                 <a href="askquestion" className='href'> Ask Question</a>
+//               </div>
+//               <div className='linkBox'v>
+//                 <a href="answerquestion" className='href'> Answer Question</a>
+//               </div>
+//               <div className='linkBox'>
+//                 <a href="pledgetokens" className='href'> Pledge Tokens</a>
+//               </div>
+//             </div>
+//           </div>        
+//           <h4 className='title1'> Answer a question! </h4>
+//           <div className='select_parentBox'>
+//            <select className='selectBox' type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
+//             {this.createSelectItems()}
+//            </select>
+//           </div>          
+//         <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+//         <DropdownToggle
+//           tag="span"
+//           onClick={this.toggle}
+//           data-toggle="dropdown"
+//           aria-expanded={this.state.dropdownOpen}
+//         >
+//           List of Questions
+//         </DropdownToggle>
+//         <DropdownMenu>
+//           <div onClick={this.toggle}>Question 1</div>
+//           <div onClick={this.toggle}>Question 2</div>
+//           <div onClick={this.toggle}>Question 3</div>
+//           <div onClick={this.toggle}>Question 4</div>
+//         </DropdownMenu>
+//       </Dropdown>
+//             <p></p>
+//       <form className='questionForm'> 
+//           <input
+//             className='questionBox'
+//                 type='text'
+//                 placeholder='Write Answer here...'
+//                 /*value={this.getstate.question}*/
+// /*                onChange={event => this.setState(byPropKey('password', event.target.value))}*/
+//           />
+//           <div className='extras'>
+//             <h5>Tokens </h5>
+//             <input
+//               className='tokens'
+//               type='number'
+//               /*value={this.getstate.numTokens}*/
+//               placeholder='Pledge tokens'
+//             />
+//             <h5>Resolve Date </h5>
+//             <input
+//               className='resolveDate'
+//               type='date'
+//               placeholder='Resolve date'
+//                       /*value={this.getstate.resolveDate}*/
+//             />
+//           </div>
+//           <button
+//             className='submitButton'
+//             type='submit'
+//             /*onClick={() => this.}*/
+//           >
+//           Validate
+//           </button>
+//           <button
+//             className='submitButton'
+//             type='submit'
+//             /*onClick={() => this.}*/
+//           >
+//           Submit
+//           </button>
+//         </form>
+        
+//       </div>
+//       )
+//    }
+// }
