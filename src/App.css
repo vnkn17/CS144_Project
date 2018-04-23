@@ -315,7 +315,7 @@ code {
 }
 
 .submitButton1:hover {
-    background-color: #008CBA; 
+    background-color: rgb(8, 193, 255); 
     color: white;
 }
 
@@ -336,5 +336,7 @@ code {
   font-family: 'Roboto';
   font-weight: 700; 
   background-color: black;
-  color: blue;
+  color: lightblue;
+  font-weight: bold;
 }
+
