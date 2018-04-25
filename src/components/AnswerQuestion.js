@@ -498,8 +498,9 @@ onDropdownSelected(e) {
     // database.ref('/questions/questionData/' + selectedQuestionID + '/askerID').once("value").then(function(snapshot) {
     //   var askerID = Number(snapshot.val());
 
-      database.ref('users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+      database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
         currentUserID = Number(snapshot.val());
+        console.log("currentUserID: " + currentUserID);
 
         if (currentUserID === askerID) {
           // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
