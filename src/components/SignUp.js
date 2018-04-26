@@ -115,6 +115,24 @@ export default class SignUp extends Component {
     //   console.log("dank memes fam")
     //   console.log(snapshot.exists())
     // })
+
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    var transactionInstance;
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+      transactionContract.deployed().then(function(instance) {
+        transactionInstance = instance;
+
+        // Execute adopt as a transaction by sending account
+        transactionInstance.accountCreation(account, {from: account});
+      });
+    });
+
   }
 
   render() {
