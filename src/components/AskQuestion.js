@@ -127,18 +127,6 @@ export default class AskQuestion extends Component {
         });
       });
     });
-
-    // database.ref('/questions/unresolved').on("value", function(snapshot) {
-    //     // Pass
-    // });
-
-    // while (true) {
-    //   console.log("dank memes");
-    // }
-
-    // console.log("not dank at all")
-    
-    ////////// END FIREBASE CODE
   }
 
   render () {  
@@ -168,6 +156,9 @@ export default class AskQuestion extends Component {
             <div className='linkBox'>
               <a href="pledgetokens" className='href'> Pledge Tokens</a>
             </div>
+            <div className='linkBox'>
+              <a href="reviewtokens" className='href'> Review Tokens</a>
+            </div>              
           </div>
         </div>     
       	<h1 className='title1'> Post a question! </h1>
@@ -206,15 +197,3 @@ export default class AskQuestion extends Component {
     )
   }
 }
-
-
-
-
-
-
-/*// <button
-            //  className='submitButton'
-            //  type='submit'
-            // >
-            // Validate
-            // </button>*/

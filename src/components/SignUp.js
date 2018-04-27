@@ -169,6 +169,9 @@ export default class SignUp extends Component {
             <div className='linkBox'>
               <a href="pledgetokens" className='href'> Pledge Tokens</a>
             </div>
+            <div className='linkBox'>
+              <a href="reviewtokens" className='href'> Review Tokens</a>
+            </div>              
           </div>
         </div>
         <h1 className='title1'>Sign up</h1>

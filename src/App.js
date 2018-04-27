@@ -9,6 +9,7 @@ import SignIn from './components/SignIn'
 import AskQuestion from './components/AskQuestion'
 import AnswerQuestion from './components/AnswerQuestion'
 import PledgeTokens from './components/PledgeTokens'
+import ReviewTokens from './components/ReviewTokens'
 import {BrowserRouter, Route} from 'react-router-dom';
 import firebase from 'firebase'
 
@@ -169,6 +170,11 @@ class App extends Component {
               <SignIn />
             </div>
           )}/>
+          <Route exact={true} path='/reviewtokens' render={() => (
+            <div className="App">
+              <ReviewTokens />
+            </div>
+          )}/>          
           <Route exact={true} path='/askquestion' render={() => (
             <div className="App">
               <AskQuestion />
@@ -189,7 +195,6 @@ class App extends Component {
               <PledgeTokens />
             </div>
           )}/>
-
         </div>
       </BrowserRouter>
     );

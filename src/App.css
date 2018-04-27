@@ -164,7 +164,8 @@ code {
 }
 
 .resolveDate {
-  display: flex; 
+  display: flex;
+  padding-right: 5px; 
 }
 
 .extras {
@@ -376,4 +377,12 @@ code {
   display: flex;
   flex-direction: column;
   color: black;
+}
+
+/* Review Tokens page  */
+.contentBox {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
 }
