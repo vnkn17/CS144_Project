@@ -339,7 +339,7 @@ export default class AnswerQuestion extends Component {
 
       database.ref('/questions/unresolved').once("value").then(function(snapshot) {
         var dict = snapshot.val();
-        console.log('check1');
+        console.log(dict);
         for (var key in dict) {
           answerableInds.push(dict[key]);
         }
@@ -348,10 +348,11 @@ export default class AnswerQuestion extends Component {
         database.ref('/questions/questionData').once("value").then(function(snapshot) {
           console.log("BIG TEST: " + snapshot.val()[0].text);
 
+          console.log(answerableInds);
           var snap = snapshot.val();
 
           for (var ind in answerableInds) {
-            var qInfo = snap[answerableInds[ind]];
+            var qInfo = snap[answerableInds[ind].questionID];
             globalAnswers.push(qInfo);
           }
 

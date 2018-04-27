@@ -77,7 +77,7 @@ export default class AskQuestion extends Component {
             questionCount : 1,
             questionData : {},
             unresIndex : 1,
-            unresolved : {0 : 0},
+            unresolved : {},
           });
           database.ref('/questions/questionData/' + 0).set({
             // questionID : 0,
@@ -88,6 +88,12 @@ export default class AskQuestion extends Component {
             resolved : 'false',
             correctAnswer : ''
           });
+          database.ref('/questions/unresolved/' + 0).set({
+            questionID: 0,
+            askerID: userID
+
+          });
+
         }
         else {
           var newQuestionId;
