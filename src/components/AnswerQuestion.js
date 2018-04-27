@@ -498,7 +498,8 @@ onDropdownSelected(e) {
     // database.ref('/questions/questionData/' + selectedQuestionID + '/askerID').once("value").then(function(snapshot) {
     //   var askerID = Number(snapshot.val());
 
-      database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+      database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
+        console.log("Debugging issue: ", Number(snapshot.val()));
         currentUserID = Number(snapshot.val());
         console.log("currentUserID: " + currentUserID);
 
