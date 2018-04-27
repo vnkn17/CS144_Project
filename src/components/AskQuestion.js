@@ -109,7 +109,14 @@ export default class AskQuestion extends Component {
               newUnresIndex = Number(snapshot.val());
 
               database.ref('/questions/unresIndex').set(newUnresIndex + 1);
-              database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
+              database.ref('/questions/unresolved/' + newUnresIndex).set({
+                questionID: newQuestionId,
+                askerID: userID
+
+              });
+
+
+
             });
           });
         }
