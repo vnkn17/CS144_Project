@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import update from 'react-addons-update';
 import quizQuestions from './helpers/quizQuestions';
 import Quiz from './helpers/Quiz';
-import Result from './helpers/Result'; 
+import Result from './helpers/Result';
 import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
 import { Button } from 'reactstrap';
 import GithubUsers from './helpers/GithubUsers';
@@ -10,6 +10,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 
 require('firebase');
+
 
 export default class PledgeTokens extends Component {
 
@@ -27,7 +28,8 @@ export default class PledgeTokens extends Component {
         Microsoft: 0,
         Sony: 0
       },
-      result: ''
+      result: '',
+      answerIDTokens: []
     };
 
     firebase.auth().onAuthStateChanged(function(user) {
@@ -38,19 +40,120 @@ export default class PledgeTokens extends Component {
       }
     });
 
+    //this.handleAnswerSelected = this.handleAnswerSelected.bind(this);
+    this.handler = this.handler.bind(this);
 
-    var database = firebase.database();
-
-    this.handleAnswerSelected = this.handleAnswerSelected.bind(this);
   }
+
+  handler(idOfAnswer, tokensAwarded) {
+    var pair =
+      {idOfAnswer: idOfAnswer,
+      tokensAwarded: Number(tokensAwarded)};
+    console.log("pair", pair);
+    var joined = this.state.answerIDTokens.concat(pair);
+    this.setState({ answerIDTokens: joined });
+  }
+
 
   componentWillMount() {
-    const shuffledAnswerOptions = quizQuestions.map((question) => this.shuffleArray(question.answers));
-    this.setState({
-      question: quizQuestions[0].question,
-      answerOptions: shuffledAnswerOptions[0]
-    });
+        console.log("start of component mount");
+        var database = firebase.database();
+
+
+        var componentVariable = this;
+          // Render question and answers with token pledging UI
+          // On Submit collect tokens and distribute accordingly calling smart contract functions
+
+
+        // Get current person whos logged in ID curID.
+        var currentUser = firebase.auth().currentUser;
+        var email;
+        if (currentUser != null) {
+          email = (currentUser.email).replace(/\./g, '_');
+          console.log("submit email: " + email);
+        }
+
+        var currentUserID;
+        var questionStorageID = -1;
+        var qaJSON =
+          {question: "",
+           questionID: null,
+           askerID: "",
+           answers: []
+          };
+        database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
+
+          currentUserID = Number(snapshot.val());
+
+          // Go through unresolved questions, get one question questionID s.t. curID = askerID
+          database.ref('/questions/unresolved/').once("value").then(function(snapshot) {
+
+            var unresolvedQuestions = snapshot.val();
+            console.log("indices", unresolvedQuestions);
+
+            for (var i = 0; i < unresolvedQuestions.length; i++) {
+
+                if (unresolvedQuestions[i].askerID == currentUserID) {
+                  questionStorageID = unresolvedQuestions[i].questionID;
+                  break;
+                }
+            }
+
+            if(questionStorageID == -1) {
+              console.log("No question...");
+            }
+            else {
+
+              // Find questionID, get relevant answers
+              database.ref('/questions/questionData/' + questionStorageID + '/answers').once("value").then(function(snapshot) {
+                var answerCount = snapshot.child("answerCount").val();
+                console.log(Number(answerCount));
+
+                var question = '/questions/questionData/' + questionStorageID;
+                database.ref(question).once("value").then(function(snapshot) {
+
+                  qaJSON.question = snapshot.child("text").val();
+                  qaJSON.questionID = questionStorageID;
+                  qaJSON.askerID = snapshot.child("askerID").val();
+
+
+                  var answerInformation = snapshot.child("answers").child("answerData").val();
+
+
+                  for(var i = 0; i < answerCount; i++) {
+                    var a = {
+                      content: "",
+                      answererID: null,
+                      answerID: null
+                    }
+
+                    a.content = answerInformation[i].answerText;
+                    a.answererID = answerInformation[i].answererID;
+                    a.answerID = i;
+
+                    qaJSON.answers.push(a);
+                  }
+
+
+                  quizQuestions[0] = qaJSON;
+                  const shuffledAnswerOptions = quizQuestions.map((question) => componentVariable.shuffleArray(question.answers));
+                  console.log(shuffledAnswerOptions[0]);
+                  componentVariable.setState({
+                    question: quizQuestions[0].question,
+                    answerOptions: shuffledAnswerOptions[0]
+                  });
+
+                });
+
+              });
+
+            }
+
+          });
+
+        });
   }
+
 
   shuffleArray(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -73,14 +176,17 @@ export default class PledgeTokens extends Component {
 
   handleAnswerSelected(event) {
     this.setUserAnswer(event.currentTarget.value);
+    console.log("ID", this.state.questionId);
+    console.log("Length", this.quizQuestions.length);
 
     if (this.state.questionId < quizQuestions.length) {
+
         setTimeout(() => this.setNextQuestion(), 300);
     } else {
         setTimeout(() => this.setResults(this.getResults()), 300);
     }
   }
-
+/*
   setUserAnswer(answer) {
     const updatedAnswersCount = update(this.state.answersCount, {
       [answer]: {$apply: (currentValue) => currentValue + 1}
@@ -104,6 +210,8 @@ export default class PledgeTokens extends Component {
         answer: ''
     });
   }
+*/
+
 
   getResults() {
     const answersCount = this.state.answersCount;
@@ -131,6 +239,7 @@ export default class PledgeTokens extends Component {
         question={this.state.question}
         questionTotal={quizQuestions.length}
         onAnswerSelected={this.handleAnswerSelected}
+        getTokensHandler={this.handler}
       />
     );
   }
@@ -148,13 +257,13 @@ export default class PledgeTokens extends Component {
           <div className='linksParentBox'>
             <div className='linkBox'>
               <a href="signin" className='href'>Sign In</a>
-            </div> 
+            </div>
             <div className='linkBox'>
               <a href="signup" className='href'> Sign Up</a>
             </div>
             <div className='linkBox'>
               <a href="/" className='href'>Home</a>
-            </div>           
+            </div>
             <div className='linkBox'>
               <a href="askquestion" className='href'> Ask Question</a>
             </div>
@@ -171,7 +280,7 @@ export default class PledgeTokens extends Component {
         </div>
         <button className='submitButton1' type='submit'>
             Submit
-        </button>        
+        </button>
       </div>
     );
   }

@@ -177,7 +177,7 @@ class App extends Component {
           )}/>          
           <Route exact={true} path='/askquestion' render={() => (
             <div className="App">
-              <AskQuestion />
+              <AskQuestion transcontract={this.state.transaction} web={this.state.web3}/>
             </div>
           )}/>
           <Route exact={true} path='/signup' render={() => (
@@ -187,12 +187,12 @@ class App extends Component {
           )}/>
           <Route exact={true} path='/answerquestion' render={() => (
             <div className="App">
-              <AnswerQuestion />
+              <AnswerQuestion transcontract={this.state.transaction} web={this.state.web3}/>
             </div>
           )}/>
           <Route exact={true} path='/PledgeTokens' render={() => (
             <div className="App">
-              <PledgeTokens />
+              <PledgeTokens transcontract={this.state.transaction} web={this.state.web3}/>
             </div>
           )}/>
         </div>

@@ -65,7 +65,7 @@ export default class AnswerQuestion extends Component {
 
       database.ref('/questions/unresolved').once("value").then(function(snapshot) {
         var dict = snapshot.val();
-        console.log('check1');
+        console.log(dict);
         for (var key in dict) {
           answerableInds.push(dict[key]);
         }
@@ -74,10 +74,11 @@ export default class AnswerQuestion extends Component {
         database.ref('/questions/questionData').once("value").then(function(snapshot) {
           console.log("BIG TEST: " + snapshot.val()[0].text);
 
+          console.log(answerableInds);
           var snap = snapshot.val();
 
           for (var ind in answerableInds) {
-            var qInfo = snap[answerableInds[ind]];
+            var qInfo = snap[answerableInds[ind].questionID];
             globalAnswers.push(qInfo);
           }
 
@@ -90,15 +91,15 @@ export default class AnswerQuestion extends Component {
           let answerable = globalAnswers;
           let l = 4;
           let items=[];
-          var i = 0         
-          for (var item in globalAnswers) {  
-              console.log(globalAnswers[item]);  
+          var i = 0
+          for (var item in globalAnswers) {
+              console.log(globalAnswers[item]);
               var optText = globalAnswers[item].text + " | " + globalAnswers[item].tokensPledged + " Tokens";
               var optValue = [item, globalAnswers[item].askerID];
               var el = document.createElement("option");
               el.textContent = optText;
               el.value = optValue;
-              dropdownSelector.appendChild(el);    
+              dropdownSelector.appendChild(el);
               // items.push(<option key={i} value={globalAnswers[item].text}>{globalAnswers[item].text}</option>);
               // i++;
               //here I will be creating my options dynamically based on
@@ -115,7 +116,7 @@ onDropdownSelected(e) {
     console.log("THE VAL", e.target.value);
     selectedValues = e.target.value;
     //here you will see the current selected value of the select input
-}   
+}
 
   onSubmit = (event) => {
     event.preventDefault();
@@ -148,7 +149,8 @@ onDropdownSelected(e) {
     // database.ref('/questions/questionData/' + selectedQuestionID + '/askerID').once("value").then(function(snapshot) {
     //   var askerID = Number(snapshot.val());
 
-      database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+      database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
+        console.log("Debugging issue: ", Number(snapshot.val()));
         currentUserID = Number(snapshot.val());
         console.log("currentUserID: " + currentUserID);
 
@@ -163,11 +165,11 @@ onDropdownSelected(e) {
             // Need to deal with answer IDs, and other such things.
             // See User storage and question storage for examples.
             if(!snapshot.exists()) {
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers').set({
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers').set({
                 answerCount : 1,
                 answerData : {}
               });
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/0').set({
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/0').set({
                 answererID : currentUserID,
                 answerText : proposedAnswer,
                 tokensAwarded : 0
@@ -175,10 +177,10 @@ onDropdownSelected(e) {
             }
             else {
               var newAnswerID;
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
                 newAnswerID = Number(snapshot.val());
-                database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
-                database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
+                database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
+                database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
                   answererID : currentUserID,
                   answerText : proposedAnswer,
                   tokensAwarded : 0
@@ -191,6 +193,27 @@ onDropdownSelected(e) {
     // });
 
     // database.ref('/questions/')
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    var transactionInstance;
+
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+      transactionContract.deployed().then(function(instance) {
+        transactionInstance = instance;
+
+        // Execute adopt as a transaction by sending account
+        transactionInstance.addAnswerer(account, selectedQuestionID, {from: account}).then(function(result) {
+          console.log("Added Answerer Success", result.toString());
+        });
+
+      });
+    });
+
 
   }
 
@@ -200,7 +223,7 @@ onDropdownSelected(e) {
     });
     ReactDOM.render(
       <div>
-      <GithubUsers label="GitHub users (Async with fetch.js)" />  
+      <GithubUsers label="GitHub users (Async with fetch.js)" />
       </div>
     );
   }
@@ -212,13 +235,13 @@ onDropdownSelected(e) {
           <div className='linksParentBox'>
             <div className='linkBox'>
               <a href="signin" className='href'>Sign In</a>
-            </div> 
+            </div>
             <div className='linkBox'>
               <a href="signup" className='href'> Sign Up</a>
             </div>
             <div className='linkBox'>
               <a href="/" className='href'>Home</a>
-            </div>           
+            </div>
             <div className='linkBox'>
               <a href="askquestion" className='href'> Ask Question</a>
             </div>
@@ -231,7 +254,7 @@ onDropdownSelected(e) {
           </div>
         </div>
         <div className='answQBox'>
-          <div> 
+          <div>
             <form className='answer_parentBox' onSubmit={this.onSubmit}>
             <label className='labelBox'>
               <h4 className='title1'>Select a question to answer</h4>
@@ -241,9 +264,9 @@ onDropdownSelected(e) {
               </div>
             </label>
             <div className='answerBox'>
-              <input 
+              <input
                 className='answerBox1'
-                type='text' 
+                type='text'
                 placeholder='Write answer here'
                 onChange={event=>this.setState({proposedAnswer: event.target.value})}
               />
@@ -263,96 +286,3 @@ onDropdownSelected(e) {
     )
   }
 };
-  
-//    render () {                                   
-//       return (
-//         <div className='mainBox'>
-//           <div className='headerBox'>
-//             <div className='linksParentBox'>
-//               <div className='linkBox'>
-//                 <a href="signin" className='href'>Sign In</a>
-//               </div> 
-//               <div className='linkBox'>
-//                 <a href="signup" className='href'> Sign Up</a>
-//               </div>
-//               <div className='linkBox'>
-//                 <a href="/" className='href'>Home</a>
-//               </div>           
-//               <div className='linkBox'>
-//                 <a href="askquestion" className='href'> Ask Question</a>
-//               </div>
-//               <div className='linkBox'v>
-//                 <a href="answerquestion" className='href'> Answer Question</a>
-//               </div>
-//               <div className='linkBox'>
-//                 <a href="pledgetokens" className='href'> Pledge Tokens</a>
-//               </div>
-//             </div>
-//           </div>        
-//           <h4 className='title1'> Answer a question! </h4>
-//           <div className='select_parentBox'>
-//            <select className='selectBox' type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
-//             {this.createSelectItems()}
-//            </select>
-//           </div>          
-//         <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-//         <DropdownToggle
-//           tag="span"
-//           onClick={this.toggle}
-//           data-toggle="dropdown"
-//           aria-expanded={this.state.dropdownOpen}
-//         >
-//           List of Questions
-//         </DropdownToggle>
-//         <DropdownMenu>
-//           <div onClick={this.toggle}>Question 1</div>
-//           <div onClick={this.toggle}>Question 2</div>
-//           <div onClick={this.toggle}>Question 3</div>
-//           <div onClick={this.toggle}>Question 4</div>
-//         </DropdownMenu>
-//       </Dropdown>
-//             <p></p>
-//       <form className='questionForm'> 
-//           <input
-//             className='questionBox'
-//                 type='text'
-//                 placeholder='Write Answer here...'
-//                 /*value={this.getstate.question}*/
-// /*                onChange={event => this.setState(byPropKey('password', event.target.value))}*/
-//           />
-//           <div className='extras'>
-//             <h5>Tokens </h5>
-//             <input
-//               className='tokens'
-//               type='number'
-//               /*value={this.getstate.numTokens}*/
-//               placeholder='Pledge tokens'
-//             />
-//             <h5>Resolve Date </h5>
-//             <input
-//               className='resolveDate'
-//               type='date'
-//               placeholder='Resolve date'
-//                       /*value={this.getstate.resolveDate}*/
-//             />
-//           </div>
-//           <button
-//             className='submitButton'
-//             type='submit'
-//             /*onClick={() => this.}*/
-//           >
-//           Validate
-//           </button>
-//           <button
-//             className='submitButton'
-//             type='submit'
-//             /*onClick={() => this.}*/
-//           >
-//           Submit
-//           </button>
-//         </form>
-        
-//       </div>
-//       )
-//    }
-// }

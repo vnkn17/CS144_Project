@@ -28,7 +28,7 @@ export default class AskQuestion extends Component {
   logoutClick = () => {
     firebase.auth().signOut().then(function() {
       // Sign-out successful.
-      console.log("Succesful signing out."); 
+      console.log("Succesful signing out.");
 
     }, function(error) {
       // An error happened.
@@ -51,7 +51,7 @@ export default class AskQuestion extends Component {
     // and other relevant pieces of information.
 
     var database = firebase.database();
-  
+
     var currentUser = firebase.auth().currentUser;
     var email;
     if (currentUser != null) {
@@ -65,7 +65,7 @@ export default class AskQuestion extends Component {
     // }
 
     var userID;
-
+    var solidityQuestionId = 0;
     event.preventDefault();
 
     database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
@@ -77,7 +77,7 @@ export default class AskQuestion extends Component {
             questionCount : 1,
             questionData : {},
             unresIndex : 1,
-            unresolved : {0 : 0},
+            unresolved : {},
           });
           database.ref('/questions/questionData/' + 0).set({
             // questionID : 0,
@@ -88,12 +88,18 @@ export default class AskQuestion extends Component {
             resolved : 'false',
             correctAnswer : ''
           });
+          database.ref('/questions/unresolved/' + 0).set({
+            questionID: 0,
+            askerID: userID
+
+          });
+
         }
         else {
           var newQuestionId;
           database.ref('/questions/questionCount').once("value").then(function(snapshot) {
             newQuestionId = Number(snapshot.val());
-
+            solidityQuestionId = newQuestionId;
             database.ref('questions/questionCount').set(newQuestionId + 1);
             database.ref('questions/questionData/' + newQuestionId).set({
               // questionID : newQuestionId,
@@ -109,7 +115,14 @@ export default class AskQuestion extends Component {
               newUnresIndex = Number(snapshot.val());
 
               database.ref('/questions/unresIndex').set(newUnresIndex + 1);
-              database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
+              database.ref('/questions/unresolved/' + newUnresIndex).set({
+                questionID: newQuestionId,
+                askerID: userID
+
+              });
+
+
+
             });
           });
         }
@@ -127,9 +140,38 @@ export default class AskQuestion extends Component {
         });
       });
     });
+
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    var transactionInstance;
+    console.log("solidityQuestionId: ", solidityQuestionId);
+
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+      transactionContract.deployed().then(function(instance) {
+        transactionInstance = instance;
+
+
+        // Execute adopt as a transaction by sending account
+        transactionInstance.addQuestioner(account, numTokens, solidityQuestionId, {from: account}).then(function(result) {
+          return transactionInstance.getBalance.call(account);
+        }).then(function(stuff) {
+          var yo = stuff.toNumber();
+          console.log("Current balance: ", yo);
+        });
+
+
+      });
+    });
+
+    ////////// END FIREBASE CODE
   }
 
-  render () {  
+  render () {
     const {
       question,
       numTokens,
@@ -143,13 +185,13 @@ export default class AskQuestion extends Component {
           <div className='linksParentBox'>
             <div className='linkBox'>
               <a href="signin" className='href'>Sign In</a>
-            </div> 
+            </div>
             <div className='linkBox'>
               <a href="signup" className='href'> Sign Up</a>
             </div>
             <div className='linkBox'>
               <a href="/" className='href'>Home</a>
-            </div>           
+            </div>
             <div className='linkBox'>
               <a href="answerquestion" className='href'> Answer Question</a>
             </div>
@@ -160,7 +202,7 @@ export default class AskQuestion extends Component {
               <a href="reviewtokens" className='href'> Review Tokens</a>
             </div>              
           </div>
-        </div>     
+        </div>
       	<h1 className='title1'> Post a question! </h1>
       	<form className='questionForm' onSubmit = {this.onSubmit}>
       		<input
