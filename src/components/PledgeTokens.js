@@ -134,7 +134,7 @@ export default class PledgeTokens extends Component {
                   console.log("shuffledAnswerOptions", shuffledAnswerOptions);
                   componentVariable.setState({
                     question: quizQuestions[0].question,
-                    answerOptions: shuffledAnswerOptions
+                    answerOptions: shuffledAnswerOptions[0]
                   });
 
                 });
