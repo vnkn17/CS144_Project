@@ -542,6 +542,27 @@ onDropdownSelected(e) {
     // });
 
     // database.ref('/questions/')
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    var transactionInstance;
+
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+      transactionContract.deployed().then(function(instance) {
+        transactionInstance = instance;
+
+        // Execute adopt as a transaction by sending account
+        transactionInstance.addAnswerer(account, selectedQuestionID, {from: account}).then(function(result) {
+          console.log("Added Answerer Success", result.toString());
+        });
+
+      });
+    });
+
 
   }
 
