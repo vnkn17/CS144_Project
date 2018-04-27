@@ -171,7 +171,7 @@ class App extends Component {
           )}/>
           <Route exact={true} path='/askquestion' render={() => (
             <div className="App">
-              <AskQuestion />
+              <AskQuestion transcontract={this.state.transaction} web={this.state.web3}/>
             </div>
           )}/>
           <Route exact={true} path='/signup' render={() => (

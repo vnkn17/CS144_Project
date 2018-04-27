@@ -128,9 +128,18 @@ export default class SignUp extends Component {
       transactionContract.deployed().then(function(instance) {
         transactionInstance = instance;
 
-        // Execute adopt as a transaction by sending account
-        transactionInstance.accountCreation(account, {from: account});
+        // Execute adopt as a transaction by sending account, check balance.
+        transactionInstance.accountCreation(account, {from: account}).then(function(result) {
+          return transactionInstance.getBalance.call(account);
+        }).then(function(stuff) {
+          var yo = stuff.toNumber();
+          console.log("Current balance: ", yo);
+        });
+
+
       });
+
+
     });
 
   }
