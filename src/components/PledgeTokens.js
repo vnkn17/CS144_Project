@@ -11,6 +11,7 @@ import firebase from 'firebase';
 
 require('firebase');
 
+
 export default class PledgeTokens extends Component {
 
   constructor(props) {
@@ -27,7 +28,8 @@ export default class PledgeTokens extends Component {
         Microsoft: 0,
         Sony: 0
       },
-      result: ''
+      result: '',
+      answerIDTokens: []
     };
 
     firebase.auth().onAuthStateChanged(function(user) {
@@ -38,12 +40,19 @@ export default class PledgeTokens extends Component {
       }
     });
 
-    this.handleAnswerSelected = this.handleAnswerSelected.bind(this);
-
+    //this.handleAnswerSelected = this.handleAnswerSelected.bind(this);
+    this.handler = this.handler.bind(this);
 
   }
 
-
+  handler(idOfAnswer, tokensAwarded) {
+    var pair =
+      {idOfAnswer: idOfAnswer,
+      tokensAwarded: Number(tokensAwarded)};
+    console.log("pair", pair);
+    var joined = this.state.answerIDTokens.concat(pair);
+    this.setState({ answerIDTokens: joined });
+  }
 
 
   componentWillMount() {
@@ -113,7 +122,6 @@ export default class PledgeTokens extends Component {
 
                   for(var i = 0; i < answerCount; i++) {
                     var a = {
-                      type: "Default type",
                       content: "",
                       answererID: null,
                       answerID: null
@@ -127,11 +135,9 @@ export default class PledgeTokens extends Component {
                   }
 
 
-                  console.log("original", quizQuestions[0].answers)
                   quizQuestions[0] = qaJSON;
-                  console.log("quizQuestions0", quizQuestions[0]);
                   const shuffledAnswerOptions = quizQuestions.map((question) => componentVariable.shuffleArray(question.answers));
-                  console.log("shuffledAnswerOptions", shuffledAnswerOptions);
+                  console.log(shuffledAnswerOptions[0]);
                   componentVariable.setState({
                     question: quizQuestions[0].question,
                     answerOptions: shuffledAnswerOptions[0]
@@ -170,14 +176,17 @@ export default class PledgeTokens extends Component {
 
   handleAnswerSelected(event) {
     this.setUserAnswer(event.currentTarget.value);
+    console.log("ID", this.state.questionId);
+    console.log("Length", this.quizQuestions.length);
 
     if (this.state.questionId < quizQuestions.length) {
+
         setTimeout(() => this.setNextQuestion(), 300);
     } else {
         setTimeout(() => this.setResults(this.getResults()), 300);
     }
   }
-
+/*
   setUserAnswer(answer) {
     const updatedAnswersCount = update(this.state.answersCount, {
       [answer]: {$apply: (currentValue) => currentValue + 1}
@@ -201,6 +210,8 @@ export default class PledgeTokens extends Component {
         answer: ''
     });
   }
+*/
+
 
   getResults() {
     const answersCount = this.state.answersCount;
@@ -228,6 +239,7 @@ export default class PledgeTokens extends Component {
         question={this.state.question}
         questionTotal={quizQuestions.length}
         onAnswerSelected={this.handleAnswerSelected}
+        getTokensHandler={this.handler}
       />
     );
   }

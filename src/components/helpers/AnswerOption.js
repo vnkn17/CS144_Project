@@ -6,27 +6,28 @@ function AnswerOption(props) {
     <li className="white">
       <input
         className='black'
-        type='number'
-        /*value={this.getstate.numTokens}*/
+        onChange={event => props.getTokensHandler(props.answerId, event.target.value) }
         placeholder='Pledge tokens'
       />
-      <label className="radioCustomLabel" htmlFor={props.answerType}>
+      <label className="radioCustomLabel">
         {props.answerContent}
-      </label>  
-      
+      </label>
+
     </li>
-    
-    
+
+
     /*onClick={() => this.}*/
   );
 
 }
 
 AnswerOption.propTypes = {
-  answerType: React.PropTypes.number.isRequired,
   answerContent: React.PropTypes.string.isRequired,
+  answerId: React.PropTypes.number.isRequired,
   answer: React.PropTypes.string.isRequired,
-  onAnswerSelected: React.PropTypes.func.isRequired
+  onAnswerSelected: React.PropTypes.func.isRequired,
+  getTokensHandler: React.PropTypes.func.isRequired
+
 };
 
 export default AnswerOption;

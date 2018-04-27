@@ -10,11 +10,13 @@ function Quiz(props) {
     return (
       <AnswerOption
         key={key.content}
-        answerContent={key.type + ": " + key.content}
-        answerType={key.type}
+        answerContent={key.content}
+        answerId={key.answerID}
         answer={props.answer}
         questionId={props.questionId}
         onAnswerSelected={props.onAnswerSelected}
+        getTokensHandler={props.getTokensHandler}
+
       />
     );
   }
@@ -49,7 +51,9 @@ Quiz.propTypes = {
   question: React.PropTypes.string.isRequired,
   questionId: React.PropTypes.number.isRequired,
   questionTotal: React.PropTypes.number.isRequired,
-  onAnswerSelected: React.PropTypes.func.isRequired
+  onAnswerSelected: React.PropTypes.func.isRequired,
+  getTokensHandler: React.PropTypes.func.isRequired
+
 };
 
 export default Quiz;
