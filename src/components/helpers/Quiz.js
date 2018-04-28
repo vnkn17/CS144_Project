@@ -12,6 +12,7 @@ function Quiz(props) {
         key={key.content}
         answerContent={key.content}
         answerId={key.answerID}
+        answererID={key.answererID}
         answer={props.answer}
         questionId={props.questionId}
         onAnswerSelected={props.onAnswerSelected}
@@ -52,7 +53,8 @@ Quiz.propTypes = {
   questionId: React.PropTypes.number.isRequired,
   questionTotal: React.PropTypes.number.isRequired,
   onAnswerSelected: React.PropTypes.func.isRequired,
-  getTokensHandler: React.PropTypes.func.isRequired
+  getTokensHandler: React.PropTypes.func.isRequired,
+  answererID: React.PropTypes.number.isRequired
 
 };
 

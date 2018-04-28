@@ -35,6 +35,7 @@ export default class PledgeTokens extends Component {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
+        console.log("current User: ", firebase.auth().currentUser);
       } else {
         window.location.href = '/signin';
       }
@@ -45,10 +46,11 @@ export default class PledgeTokens extends Component {
 
   }
 
-  handler(idOfAnswer, tokensAwarded) {
+  handler(idOfAnswer, tokensAwarded, answererID) {
     var pair =
       {idOfAnswer: idOfAnswer,
-      tokensAwarded: Number(tokensAwarded)};
+      tokensAwarded: Number(tokensAwarded),
+      answererID: answererID};
     console.log("pair", pair);
     var joined = this.state.answerIDTokens.concat(pair);
     this.setState({ answerIDTokens: joined });
@@ -57,100 +59,116 @@ export default class PledgeTokens extends Component {
 
   componentWillMount() {
         console.log("start of component mount");
-        var database = firebase.database();
-
-
         var componentVariable = this;
-          // Render question and answers with token pledging UI
-          // On Submit collect tokens and distribute accordingly calling smart contract functions
 
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            console.log("email: " + firebase.auth().currentUser.email);
+            console.log("current User: ", firebase.auth().currentUser);
 
-        // Get current person whos logged in ID curID.
-        var currentUser = firebase.auth().currentUser;
-        var email;
-        if (currentUser != null) {
-          email = (currentUser.email).replace(/\./g, '_');
-          console.log("submit email: " + email);
-        }
-
-        var currentUserID;
-        var questionStorageID = -1;
-        var qaJSON =
-          {question: "",
-           questionID: null,
-           askerID: "",
-           answers: []
-          };
-        database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
-
-          currentUserID = Number(snapshot.val());
-
-          // Go through unresolved questions, get one question questionID s.t. curID = askerID
-          database.ref('/questions/unresolved/').once("value").then(function(snapshot) {
-
-            var unresolvedQuestions = snapshot.val();
-            console.log("indices", unresolvedQuestions);
-
-            for (var i = 0; i < unresolvedQuestions.length; i++) {
-
-                if (unresolvedQuestions[i].askerID == currentUserID) {
-                  questionStorageID = unresolvedQuestions[i].questionID;
-                  break;
-                }
+            var database = firebase.database();
+            // Render question and answers with token pledging UI
+            // On Submit collect tokens and distribute accordingly calling smart contract functions
+            // Get current person whos logged in ID curID.
+            var currentUser = firebase.auth().currentUser;
+            console.log("current User: ", currentUser);
+            var email;
+            if (currentUser != null) {
+              email = (currentUser.email).replace(/\./g, '_');
+              console.log("submit email: " + email);
             }
 
-            if(questionStorageID == -1) {
-              console.log("No question...");
-            }
-            else {
+            var currentUserID;
+            var questionStorageID = -1;
+            var qaJSON =
+              {question: "",
+               questionID: null,
+               askerID: "",
+               answers: []
+              };
 
-              // Find questionID, get relevant answers
-              database.ref('/questions/questionData/' + questionStorageID + '/answers').once("value").then(function(snapshot) {
-                var answerCount = snapshot.child("answerCount").val();
-                console.log(Number(answerCount));
+            database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
 
-                var question = '/questions/questionData/' + questionStorageID;
-                database.ref(question).once("value").then(function(snapshot) {
+              console.log("id: ", snapshot.val());
+              currentUserID = Number(snapshot.val());
 
-                  qaJSON.question = snapshot.child("text").val();
-                  qaJSON.questionID = questionStorageID;
-                  qaJSON.askerID = snapshot.child("askerID").val();
+              // Go through unresolved questions, get one question questionID s.t. curID = askerID
+              database.ref('/questions/unresolved/').once("value").then(function(snapshot) {
 
+                var unresolvedQuestions = snapshot.val();
+                console.log("indices", unresolvedQuestions);
+                console.log("length: ", unresolvedQuestions.length);
 
-                  var answerInformation = snapshot.child("answers").child("answerData").val();
+                //console.log("What is this?", unresolvedQuestions[0].askerID);
+                for (var i = 0; i < unresolvedQuestions.length; i++) {
 
+                    console.log("done: ", unresolvedQuestions[i].done);
+                    console.log("askerID: ", unresolvedQuestions[i].askerID);
+                    console.log("ID: ", currentUserID);
 
-                  for(var i = 0; i < answerCount; i++) {
-                    var a = {
-                      content: "",
-                      answererID: null,
-                      answerID: null
+                    if (unresolvedQuestions[i].done == false && unresolvedQuestions[i].askerID == currentUserID) {
+                      questionStorageID = unresolvedQuestions[i].questionID;
+                      break;
                     }
+                }
 
-                    a.content = answerInformation[i].answerText;
-                    a.answererID = answerInformation[i].answererID;
-                    a.answerID = i;
+                if(questionStorageID == -1) {
+                  console.log("No question...");
+                }
+                else {
+                  componentVariable.setState({questionId: questionStorageID});
 
-                    qaJSON.answers.push(a);
-                  }
+                  // Find questionID, get relevant answers
+                  database.ref('/questions/questionData/' + questionStorageID + '/answers').once("value").then(function(snapshot) {
+                    var answerCount = snapshot.child("answerCount").val();
+                    console.log(Number(answerCount));
+
+                    var question = '/questions/questionData/' + questionStorageID;
+                    database.ref(question).once("value").then(function(snapshot) {
+
+                      qaJSON.question = snapshot.child("text").val();
+                      qaJSON.questionID = questionStorageID;
+                      qaJSON.askerID = snapshot.child("askerID").val();
 
 
-                  quizQuestions[0] = qaJSON;
-                  const shuffledAnswerOptions = quizQuestions.map((question) => componentVariable.shuffleArray(question.answers));
-                  console.log(shuffledAnswerOptions[0]);
-                  componentVariable.setState({
-                    question: quizQuestions[0].question,
-                    answerOptions: shuffledAnswerOptions[0]
+                      var answerInformation = snapshot.child("answers").child("answerData").val();
+
+
+                      for(var i = 0; i < answerCount; i++) {
+                        var a = {
+                          content: "",
+                          answererID: null,
+                          answerID: null
+                        }
+
+                        a.content = answerInformation[i].answerText;
+                        a.answererID = answerInformation[i].answererID;
+                        a.answerID = i;
+
+                        qaJSON.answers.push(a);
+                      }
+
+
+                      quizQuestions[0] = qaJSON;
+                      const shuffledAnswerOptions = quizQuestions.map((question) => componentVariable.shuffleArray(question.answers));
+                      console.log(shuffledAnswerOptions[0]);
+                      componentVariable.setState({
+                        question: quizQuestions[0].question,
+                        answerOptions: shuffledAnswerOptions[0]
+                      });
+
+                    });
+
                   });
 
-                });
+                }
 
               });
 
-            }
-
-          });
-
+            });
+          } else {
+            window.location.href = '/signin';
+          }
         });
   }
 
@@ -250,6 +268,91 @@ export default class PledgeTokens extends Component {
     );
   }
 
+  onSubmit = (event) => {
+    event.preventDefault();
+
+    // Determine token distribution
+    var componentVariable = this;
+    var tokenDistribution = [];
+    var computedTotalTokens = 0;
+    for(var i = 0; i < this.state.answerIDTokens.length; i++) {
+      computedTotalTokens += this.state.answerIDTokens[i].tokensAwarded;
+      tokenDistribution.push(0);
+    }
+    for(var i = 0; i < this.state.answerIDTokens.length; i++) {
+      tokenDistribution[this.state.answerIDTokens[i].idOfAnswer] =  this.state.answerIDTokens[i].tokensAwarded;
+    }
+
+    var database = firebase.database();
+    database.ref('/questions/questionData/' + componentVariable.state.questionId + '/tokensPledged').once("value").then(function(snapshot) {
+        // Check if pledged != computed
+          // If: Error
+          // Else: update firebase
+        var pledgedTokens = Number(snapshot.val());
+        if(pledgedTokens != computedTotalTokens) {
+          console.log("Error, incorrect pledged amount....");
+        } else {
+          for(var i = 0; i < tokenDistribution.length; i++) {
+              var id = componentVariable.state.questionId
+              database.ref('/questions/questionData/' + id + '/answers/answerData/' + i + '/tokensAwarded').set(tokenDistribution[i]);
+          }
+
+          database.ref('/questions/unresolved/' + componentVariable.state.questionId + '/done').set(true);
+
+          // Update on firebase after tokens distributed.
+          for(var i = 0; i < componentVariable.state.answerIDTokens.length; i++) {
+            var tokensAwarded = componentVariable.state.answerIDTokens[i].tokensAwarded;
+            var answererID = componentVariable.state.answerIDTokens[i].answererID;
+            database.ref('/users/userData/' + answererID + '/numTokens').once("value").then(function(snapshot) {
+              var curVal = Number(snapshot.val());
+              database.ref('/users/userData/' + answererID + '/numTokens').set(curVal + tokensAwarded);
+            });
+
+          }
+
+        }
+    });
+
+
+    database.ref('/questions/questionData/' + componentVariable.state.questionId + '/tokensPledged').once("value").then(function(snapshot) {
+        var pledgedTokens = Number(snapshot.val());
+
+        // First, check if correct number of tokens allocated.
+        if(pledgedTokens != computedTotalTokens) {
+          console.log("Error, incorrect pledged amount....");
+        } else {
+          // Solidity Integration giving tokens
+          var transactionContract = componentVariable.props.transcontract;
+          var transactionInstance;
+
+          componentVariable.props.web.eth.getAccounts(function(error, accounts) {
+            if (error) {
+              console.log(error);
+            }
+            var account = accounts[0];
+
+            console.log("before deploying")
+            transactionContract.deployed().then(function(instance) {
+              transactionInstance = instance;
+              console.log("after deploying");
+              console.log("QID:" , componentVariable.state.questionId);
+              console.log("Token distribution: " , tokenDistribution);
+              console.log("Account: ", account);
+              transactionInstance.executeTransaction(tokenDistribution, componentVariable.state.questionId, {from: account}).then(function(result) {
+                for (var i = 0; i < 500; i++) {
+                    console.log("transaction worked!");
+                }
+              });
+            });
+          });
+
+        }
+      });
+
+      // Update tokensAwarded (sucess message?)
+
+  }
+
   render() {
     return (
       <div className='mainBox1'>
@@ -270,17 +373,17 @@ export default class PledgeTokens extends Component {
             <div className='linkBox'>
               <a href="answerquestion" className='href'> Answer Question</a>
             </div>
-            <div className='linkBox'>
-              <a href="reviewtokens" className='href'> Review Tokens</a>
-            </div>              
           </div>
         </div>
-        <div className='font'>
-          {this.state.result ? this.renderResult() : this.renderQuiz()}
-        </div>
-        <button className='submitButton1' type='submit'>
-            Submit
-        </button>
+        <form className='questionForm' onSubmit = {this.onSubmit}>
+          <div className='font'>
+            {this.state.result ? this.renderResult() : this.renderQuiz()}
+          </div>
+          <button className='submitButton1' type='submit'>
+              Submit
+          </button>
+       </form>
+
       </div>
     );
   }

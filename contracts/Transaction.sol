@@ -59,20 +59,13 @@ contract Transaction {
       return true;
   }
 
-  // Function adds token distributions to the tokensRewarded public variables.
-  // Assumes distribution sums up to proper value.
-  function addAnswererDistribution(uint[] distribution, uint _id)
-      public returns (bool success) {
-
-      tokensRewarded[_id] = distribution;
-      return true;
-  }
 
   // Function distributes token from the tokensRewarded variable.
-  function executeTransaction(uint _id)
+  function executeTransaction(uint[] distribution, uint _id)
       public returns (bool success) {
 
       //Distribute instanceDistribute = Distribute(bank);
+      tokensRewarded[_id] = distribution;
 
       for(uint i = 0; i < answererTracker[_id].length; i++) {
         bool process = instanceDistribute.addTokens(answererTracker[_id][i], tokensRewarded[_id][i]);

@@ -46,23 +46,14 @@ export default class AskQuestion extends Component {
 
     console.log("submit clicked");
 
-    /*FIREBASE STUFF GOES HERE*/
-    // I am assuming that we have certain fields included in the database such as question IDs,
-    // and other relevant pieces of information.
-
     var database = firebase.database();
-
     var currentUser = firebase.auth().currentUser;
     var email;
     if (currentUser != null) {
       email = (currentUser.email).replace(/\./g, '_');
       console.log("submit email: " + email);
     }
-
     console.log('/users/emailsToIDs/' + email);
-    // for (var i= 0; i < 10000; i++) {
-    //   console.log("dank memes");
-    // }
 
     var userID;
     var solidityQuestionId = 0;
@@ -90,7 +81,8 @@ export default class AskQuestion extends Component {
           });
           database.ref('/questions/unresolved/' + 0).set({
             questionID: 0,
-            askerID: userID
+            askerID: userID,
+            done: false
 
           });
 
@@ -117,12 +109,10 @@ export default class AskQuestion extends Component {
               database.ref('/questions/unresIndex').set(newUnresIndex + 1);
               database.ref('/questions/unresolved/' + newUnresIndex).set({
                 questionID: newQuestionId,
-                askerID: userID
+                askerID: userID,
+                done: false
 
               });
-
-
-
             });
           });
         }
@@ -159,16 +149,13 @@ export default class AskQuestion extends Component {
         // Execute adopt as a transaction by sending account
         transactionInstance.addQuestioner(account, numTokens, solidityQuestionId, {from: account}).then(function(result) {
           return transactionInstance.getBalance.call(account);
-        }).then(function(stuff) {
-          var yo = stuff.toNumber();
-          console.log("Current balance: ", yo);
+        }).then(function(current_balance) {
+          console.log("Current balance: ", current_balance.toNumber());
         });
 
 
       });
     });
-
-    ////////// END FIREBASE CODE
   }
 
   render () {
@@ -200,7 +187,7 @@ export default class AskQuestion extends Component {
             </div>
             <div className='linkBox'>
               <a href="reviewtokens" className='href'> Review Tokens</a>
-            </div>              
+            </div>
           </div>
         </div>
       	<h1 className='title1'> Post a question! </h1>
