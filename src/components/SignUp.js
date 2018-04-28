@@ -37,7 +37,6 @@ export default class SignUp extends Component {
       .then(authUser => {
         this.setState(() => ({ ...INITIAL_STATE }));
 
-        ////////// TOMISLAV'S ATTEMPT:
         console.log('this.state', this.state)
 
         database.ref('/users').once("value").then(function(snapshot) {
@@ -90,14 +89,11 @@ export default class SignUp extends Component {
                 ethAddress : newEthAddress,
                 numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
               });
+              window.location.href = '/signin';
               console.log("finished");
             });
-
-            // NEED TO REDIRECT TO PAGE WITH ALL QUESTIONS
           }
-          //////////
         });
-        window.location.href = '/signin';
 
       })
       .catch(error => {
@@ -107,14 +103,27 @@ export default class SignUp extends Component {
 
     event.preventDefault();
 
-    // database.ref('/testData').set({
-    //   test1Key : 'test1Val'
-    // })
 
-    // database.ref('/testData').once("value").then(function(snapshot) {
-    //   console.log("dank memes fam")
-    //   console.log(snapshot.exists())
-    // })
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    var transactionInstance;
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+      transactionContract.deployed().then(function(instance) {
+        transactionInstance = instance;
+
+        // Execute adopt as a transaction by sending account, check balance.
+        transactionInstance.accountCreation(account, {from: account}).then(function(result) {
+          return transactionInstance.getBalance.call(account);
+        }).then(function(current_balance) {
+          console.log("Current balance: ", current_balance.toNumber());
+        });
+      });
+    });
   }
 
   render() {
@@ -150,6 +159,9 @@ export default class SignUp extends Component {
             </div>
             <div className='linkBox'>
               <a href="pledgetokens" className='href'> Pledge Tokens</a>
+            </div>
+            <div className='linkBox'>
+              <a href="reviewtokens" className='href'> Review Tokens</a>
             </div>
           </div>
         </div>

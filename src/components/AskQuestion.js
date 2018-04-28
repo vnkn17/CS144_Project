@@ -3,7 +3,7 @@ import firebase from 'firebase';
 
 const INITIAL_STATE = {
   question: '',
-  numTokens: '',
+  numTokens: 420,
   resolveDate: '',
   error: null,
 };
@@ -16,6 +16,7 @@ export default class AskQuestion extends Component {
   constructor(props) {
     super(props);
     this.state = {INITIAL_STATE};
+
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
@@ -23,18 +24,20 @@ export default class AskQuestion extends Component {
         window.location.href = '/signin';
       }
     });
-  }
+  
+}
 
   logoutClick = () => {
     firebase.auth().signOut().then(function() {
       // Sign-out successful.
-      console.log("Succesful signing out."); 
+      console.log("Succesful signing out.");
 
     }, function(error) {
       // An error happened.
       console.log("Error in signing out.");
     });
   }
+
 
   onSubmit = (event) => {
     const {
@@ -46,26 +49,17 @@ export default class AskQuestion extends Component {
 
     console.log("submit clicked");
 
-    /*FIREBASE STUFF GOES HERE*/
-    // I am assuming that we have certain fields included in the database such as question IDs,
-    // and other relevant pieces of information.
-
     var database = firebase.database();
-  
     var currentUser = firebase.auth().currentUser;
     var email;
     if (currentUser != null) {
       email = (currentUser.email).replace(/\./g, '_');
       console.log("submit email: " + email);
     }
-
     console.log('/users/emailsToIDs/' + email);
-    // for (var i= 0; i < 10000; i++) {
-    //   console.log("dank memes");
-    // }
 
     var userID;
-
+    var solidityQuestionId = 0;
     event.preventDefault();
 
     database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
@@ -77,7 +71,7 @@ export default class AskQuestion extends Component {
             questionCount : 1,
             questionData : {},
             unresIndex : 1,
-            unresolved : {0 : 0},
+            unresolved : {},
           });
           database.ref('/questions/questionData/' + 0).set({
             // questionID : 0,
@@ -88,12 +82,19 @@ export default class AskQuestion extends Component {
             resolved : 'false',
             correctAnswer : ''
           });
+          database.ref('/questions/unresolved/' + 0).set({
+            questionID: 0,
+            askerID: userID,
+            done: false
+
+          });
+
         }
         else {
           var newQuestionId;
           database.ref('/questions/questionCount').once("value").then(function(snapshot) {
             newQuestionId = Number(snapshot.val());
-
+            solidityQuestionId = newQuestionId;
             database.ref('questions/questionCount').set(newQuestionId + 1);
             database.ref('questions/questionData/' + newQuestionId).set({
               // questionID : newQuestionId,
@@ -109,7 +110,12 @@ export default class AskQuestion extends Component {
               newUnresIndex = Number(snapshot.val());
 
               database.ref('/questions/unresIndex').set(newUnresIndex + 1);
-              database.ref('/questions/unresolved/' + newUnresIndex).set(newQuestionId)
+              database.ref('/questions/unresolved/' + newUnresIndex).set({
+                questionID: newQuestionId,
+                askerID: userID,
+                done: false
+
+              });
             });
           });
         }
@@ -128,20 +134,35 @@ export default class AskQuestion extends Component {
       });
     });
 
-    // database.ref('/questions/unresolved').on("value", function(snapshot) {
-    //     // Pass
-    // });
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    var transactionInstance;
+    console.log("solidityQuestionId: ", solidityQuestionId);
 
-    // while (true) {
-    //   console.log("dank memes");
-    // }
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
 
-    // console.log("not dank at all")
-    
-    ////////// END FIREBASE CODE
+      var account = accounts[0];
+      transactionContract.deployed().then(function(instance) {
+        transactionInstance = instance;
+
+
+        // Execute adopt as a transaction by sending account
+        transactionInstance.addQuestioner(account, numTokens, solidityQuestionId, {from: account}).then(function(result) {
+          return transactionInstance.getBalance.call(account);
+        }).then(function(current_balance) {
+          console.log("Current balance: ", current_balance.toNumber());
+        });
+
+
+      });
+    });
   }
 
-  render () {  
+
+  render () {
     const {
       question,
       numTokens,
@@ -155,24 +176,31 @@ export default class AskQuestion extends Component {
           <div className='linksParentBox'>
             <div className='linkBox'>
               <a href="signin" className='href'>Sign In</a>
-            </div> 
+            </div>
             <div className='linkBox'>
               <a href="signup" className='href'> Sign Up</a>
             </div>
             <div className='linkBox'>
               <a href="/" className='href'>Home</a>
-            </div>           
+            </div>
             <div className='linkBox'>
               <a href="answerquestion" className='href'> Answer Question</a>
             </div>
             <div className='linkBox'>
               <a href="pledgetokens" className='href'> Pledge Tokens</a>
             </div>
+            <div className='linkBox'>
+              <a href="reviewtokens" className='href'> Review Tokens</a>
+            </div>
           </div>
-        </div>     
+        </div>
+        <div className='tokenDisplay'>
+          <h4 className='tokenText'>You own {this.state.INITIAL_STATE.numTokens} Tokens</h4>
+          <a className='tokenText1' href='www.google.com'>Buy more</a>
+        </div>
       	<h1 className='title1'> Post a question! </h1>
       	<form className='questionForm' onSubmit = {this.onSubmit}>
-      		<input
+      		<textarea
       			className='questionBox'
             type='text'
             placeholder='Write question here...'
@@ -201,20 +229,10 @@ export default class AskQuestion extends Component {
       		  Submit
       		</button>
       	</form>
-        <button className='submitButton' onClick={this.logoutClick}>Log Out User</button>
+        <div className='logOutBox'>
+          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+        </div>
       </div>
     )
   }
 }
-
-
-
-
-
-
-/*// <button
-            //  className='submitButton'
-            //  type='submit'
-            // >
-            // Validate
-            // </button>*/

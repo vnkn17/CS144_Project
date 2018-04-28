@@ -33,8 +33,8 @@
 //     var answerable = [];
 //     console.log('HELLO');
 //     console.log(this.state.answerable);
-  
-  
+
+
 //     database.ref('/questions/unresolved').once("value").then(function(snapshot) {
 //       console.log('IS THIS HAPPENING')
 //       var dict = snapshot.val();
@@ -64,14 +64,14 @@
 //   console.log(this.state.a1);
 //   console.log(this.state.answerable);
 //   let l = this.state.test_list.length;
-//   let items=[];         
-//      for (let i = 0; i <= l; i++) {             
-//           items.push(<option key={i} value={this.state.test_list[i]}>{this.state.test_list[i]}</option>);   
+//   let items=[];
+//      for (let i = 0; i <= l; i++) {
+//           items.push(<option key={i} value={this.state.test_list[i]}>{this.state.test_list[i]}</option>);
 //           //here I will be creating my options dynamically based on
 //           //what props are currently passed to the parent component
 //      }
 //      return items;
-//  }  
+//  }
 
 // onDropdownSelected(e) {
 //     console.log("THE VAL", e.target.value);
@@ -157,22 +157,22 @@
 //     this.setState({dropdownOpen: !this.state.dropdownOpen});
 //     ReactDOM.render(<div><GithubUsers label="GitHub users (Async with fetch.js)" /></div>);
 //   }
-  
 
-//    render () {                                   
+
+//    render () {
 //       return (
 //         <div className='mainBox'>
 //           <div className='headerBox'>
 //             <div className='linksParentBox'>
 //               <div className='linkBox'>
 //                 <a href="signin" className='href'>Sign In</a>
-//               </div> 
+//               </div>
 //               <div className='linkBox'>
 //                 <a href="signup" className='href'> Sign Up</a>
 //               </div>
 //               <div className='linkBox'>
 //                 <a href="/" className='href'>Home</a>
-//               </div>           
+//               </div>
 //               <div className='linkBox'>
 //                 <a href="askquestion" className='href'> Ask Question</a>
 //               </div>
@@ -190,9 +190,9 @@
 //            {this.createSelectItems()}
 //           </select>
 //             <select multiple={true} value={['b', 'c', 'd']}></select>
-//             <select 
+//             <select
 //               className='selectBox'
-//               value={this.state.value} 
+//               value={this.state.value}
 //               onChange={this.handleChange}
 //             >
 // {/*              {this.answerables.map((e, key) => {
@@ -201,13 +201,13 @@
 //               <option value="mango">mango</option>
 // {/*               <input
 //                 type="select"
-//                 // onChange={this.onDropdownSelected} 
-//                 label="Multiple Select" 
+//                 // onChange={this.onDropdownSelected}
+//                 label="Multiple Select"
 //                 multiple
 //               >
 //                 {this.renderAnswerable()}
 //               </input>}}}*/}
-//             </select>          
+//             </select>
 //         <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
 //         <DropdownToggle
 //           tag="span"
@@ -225,7 +225,7 @@
 //         </DropdownMenu>
 //       </Dropdown>
 //             <p></p>
-//       <form className='questionForm'> 
+//       <form className='questionForm'>
 //           <input
 //             className='questionBox'
 //                 type='text'
@@ -285,6 +285,7 @@ const INITIAL_STATE = {
   tokensInEscrow : 0,
   resolveDate : '',
   selectedQuestionText : '',
+  numTokens: 420,
   currentAnswerList : [],
   proposedAnswer : '',
   error : null,
@@ -317,7 +318,7 @@ export default class AnswerQuestion extends Component {
       test: [],
       dropdownOpen: false
     };
-
+  
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
@@ -329,8 +330,6 @@ export default class AnswerQuestion extends Component {
     this.render();
 
     window.onload = function() {
-      // alert(document.getElementById("selectorBox"));
-      console.log("nice meme dank meme");
       // Parsing available questions to answer with Firebase:
       var database = firebase.database();
       var answerableInds = [];
@@ -339,7 +338,7 @@ export default class AnswerQuestion extends Component {
 
       database.ref('/questions/unresolved').once("value").then(function(snapshot) {
         var dict = snapshot.val();
-        console.log('check1');
+        console.log(dict);
         for (var key in dict) {
           answerableInds.push(dict[key]);
         }
@@ -348,50 +347,33 @@ export default class AnswerQuestion extends Component {
         database.ref('/questions/questionData').once("value").then(function(snapshot) {
           console.log("BIG TEST: " + snapshot.val()[0].text);
 
+          console.log(answerableInds);
           var snap = snapshot.val();
 
           for (var ind in answerableInds) {
-            var qInfo = snap[answerableInds[ind]];
+            var qInfo = snap[answerableInds[ind].questionID];
             globalAnswers.push(qInfo);
           }
 
           console.log(globalAnswers);
           console.log(globalAnswers[0]);
           console.log("lol: " + globalAnswers[0].text);
-
-          // this.state.answerableCarry = globalAnswers;
-
           console.log('answerable2 is');
-          // let lst = this.state.answerableCarry;
-          // var k = lst;
-          // console.log(k);
-          // console.log(this.state.answerableCarry);
           console.log("answerableCarry:\n" + JSON.stringify(globalAnswers));
-          // let answerable=[
-          //   'What is the air speed velocity of an unladen swallow?, Tokens: 99, ResolveBy: 4/23/2018', 
-          //   'I\'m a student and I need a new laptop. Should I purchase a Mac or PC and why?, Tokens: 24, ResolveBy: 5/24/2018', 
-          //   'question3, Tokens: 39, ResolveBy: 6/25/2018', 
-          //   'question4, Tokens: 50, ResolveBy: 7/26/2018', 
-          //   'question5, Tokens: 75, ResolveBy: 8/27/2018'];
-          // // console.log(this.state.a1);
-          // // console.log(this.state.answerable);
-          // // let l = this.state.test_list.length;
+
           let answerable = globalAnswers;
           let l = 4;
           let items=[];
-          var i = 0         
-          for (var item in globalAnswers) {  
-              console.log(globalAnswers[item]);  
+          var i = 0
+          for (var item in globalAnswers) {
+              console.log(globalAnswers[item]);
               var optText = globalAnswers[item].text + " | " + globalAnswers[item].tokensPledged + " Tokens";
               var optValue = [item, globalAnswers[item].askerID];
               var el = document.createElement("option");
               el.textContent = optText;
               el.value = optValue;
-              dropdownSelector.appendChild(el);    
-              // items.push(<option key={i} value={globalAnswers[item].text}>{globalAnswers[item].text}</option>);
-              // i++;
-              //here I will be creating my options dynamically based on
-              //what props are currently passed to the parent component
+              dropdownSelector.appendChild(el);
+
           }
           console.log(items);
           return items;
@@ -400,72 +382,20 @@ export default class AnswerQuestion extends Component {
     };
   }
 
-  // createSelectItems() {
-  //   // Parsing available questions to answer with Firebase:
-  //   var database = firebase.database();
-  //   var answerableInds = [];
-
-  //   database.ref('/questions/unresolved').once("value").then(function(snapshot) {
-  //     var dict = snapshot.val();
-  //     console.log('check1');
-  //     for (var key in dict) {
-  //       answerableInds.push(dict[key]);
-  //     }
-  //     console.log('check2');
-
-  //     database.ref('/questions/questionData').once("value").then(function(snapshot) {
-  //       console.log("BIG TEST: " + snapshot.val()[0].text);
-
-  //       var snap = snapshot.val();
-
-  //       for (var ind in answerableInds) {
-  //         var qInfo = snap[ind];
-  //         globalAnswers.push(qInfo);
-  //       }
-
-  //       console.log(globalAnswers);
-  //       console.log(globalAnswers[0]);
-  //       console.log("lol: " + globalAnswers[0].text);
-
-  //       // this.state.answerableCarry = globalAnswers;
-
-  //       console.log('answerable2 is');
-  //       // let lst = this.state.answerableCarry;
-  //       // var k = lst;
-  //       // console.log(k);
-  //       // console.log(this.state.answerableCarry);
-  //       console.log("answerableCarry:\n" + JSON.stringify(globalAnswers));
-  //       // let answerable=[
-  //       //   'What is the air speed velocity of an unladen swallow?, Tokens: 99, ResolveBy: 4/23/2018', 
-  //       //   'I\'m a student and I need a new laptop. Should I purchase a Mac or PC and why?, Tokens: 24, ResolveBy: 5/24/2018', 
-  //       //   'question3, Tokens: 39, ResolveBy: 6/25/2018', 
-  //       //   'question4, Tokens: 50, ResolveBy: 7/26/2018', 
-  //       //   'question5, Tokens: 75, ResolveBy: 8/27/2018'];
-  //       // // console.log(this.state.a1);
-  //       // // console.log(this.state.answerable);
-  //       // // let l = this.state.test_list.length;
-  //       let answerable = globalAnswers;
-  //       let l = 4;
-  //       let items=[];
-  //       var i = 0         
-  //       for (var item in globalAnswers) {  
-  //           console.log(globalAnswers[item]);           
-  //           items.push(<option key={i} value={globalAnswers[item].text}>{globalAnswers[item].text}</option>);
-  //           i++;
-  //           //here I will be creating my options dynamically based on
-  //           //what props are currently passed to the parent component
-  //       }
-  //       console.log(items);
-  //       return items;
-  //     });
-  //   });
-  // }
-
 onDropdownSelected(e) {
     console.log("THE VAL", e.target.value);
     selectedValues = e.target.value;
     //here you will see the current selected value of the select input
-}   
+}
+    logoutClick = () => {
+      firebase.auth().signOut().then(function() {
+        // Sign-out successful.
+        console.log("Succesful signing out.");
+      }, function(error) {
+        // An error happened.
+        console.log("Error in signing out.");
+      });
+    } 
 
   onSubmit = (event) => {
     event.preventDefault();
@@ -498,7 +428,8 @@ onDropdownSelected(e) {
     // database.ref('/questions/questionData/' + selectedQuestionID + '/askerID').once("value").then(function(snapshot) {
     //   var askerID = Number(snapshot.val());
 
-      database.ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+      database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
+        console.log("Debugging issue: ", Number(snapshot.val()));
         currentUserID = Number(snapshot.val());
         console.log("currentUserID: " + currentUserID);
 
@@ -540,7 +471,32 @@ onDropdownSelected(e) {
       });
     // });
 
+    console.log("smart");
     // database.ref('/questions/')
+    // Solidity Integration.
+    var transactionContract = this.props.transcontract;
+    console.log(transactionContract);
+    var transactionInstance;
+
+    this.props.web.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      var account = accounts[0];
+      console.log("Account: ", account);
+      transactionContract.deployed().then(function(instance) {
+        print("Instance: ", instance);
+        transactionInstance = instance;
+
+        // Execute adopt as a transaction by sending account
+        transactionInstance.addAnswerer(account, selectedQuestionID, {from: account}).then(function(result) {
+          console.log("Added Answerer Success", result.toString());
+        });
+
+      });
+    });
+
 
   }
 
@@ -550,7 +506,7 @@ onDropdownSelected(e) {
     });
     ReactDOM.render(
       <div>
-      <GithubUsers label="GitHub users (Async with fetch.js)" />  
+      <GithubUsers label="GitHub users (Async with fetch.js)" />
       </div>
     );
   }
@@ -562,13 +518,13 @@ onDropdownSelected(e) {
           <div className='linksParentBox'>
             <div className='linkBox'>
               <a href="signin" className='href'>Sign In</a>
-            </div> 
+            </div>
             <div className='linkBox'>
               <a href="signup" className='href'> Sign Up</a>
             </div>
             <div className='linkBox'>
               <a href="/" className='href'>Home</a>
-            </div>           
+            </div>
             <div className='linkBox'>
               <a href="askquestion" className='href'> Ask Question</a>
             </div>
@@ -578,20 +534,23 @@ onDropdownSelected(e) {
           </div>
         </div>
         <div className='answQBox'>
-          <div> 
             <form className='answer_parentBox' onSubmit={this.onSubmit}>
             <label className='labelBox'>
+              <div className='tokenDisplay'>
+                <h4 className='tokenText'>You own {this.state.INITIAL_STATE.numTokens} Tokens</h4>
+                <a className='tokenText1' href='www.google.com'>Buy more</a>
+              </div>            
               <h4 className='title1'>Select a question to answer</h4>
               <div className='select_parentBox'>
                 <select className='selectBox' id="selectorBox" type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
-                  
-                </select>              
+
+                </select>
               </div>
             </label>
             <div className='answerBox'>
-              <input 
+              <textarea
                 className='answerBox1'
-                type='text' 
+                type='text'
                 placeholder='Write answer here'
                 onChange={event=>this.setState({proposedAnswer: event.target.value})}
               />
@@ -605,27 +564,29 @@ onDropdownSelected(e) {
             Submit
             </button>
             </form>
-          </div>
         </div>
+        <div className='logOutBox'>
+          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+        </div>        
       </div>
     )
   }
 };
-  
-//    render () {                                   
+
+//    render () {
 //       return (
 //         <div className='mainBox'>
 //           <div className='headerBox'>
 //             <div className='linksParentBox'>
 //               <div className='linkBox'>
 //                 <a href="signin" className='href'>Sign In</a>
-//               </div> 
+//               </div>
 //               <div className='linkBox'>
 //                 <a href="signup" className='href'> Sign Up</a>
 //               </div>
 //               <div className='linkBox'>
 //                 <a href="/" className='href'>Home</a>
-//               </div>           
+//               </div>
 //               <div className='linkBox'>
 //                 <a href="askquestion" className='href'> Ask Question</a>
 //               </div>
@@ -636,13 +597,13 @@ onDropdownSelected(e) {
 //                 <a href="pledgetokens" className='href'> Pledge Tokens</a>
 //               </div>
 //             </div>
-//           </div>        
+//           </div>
 //           <h4 className='title1'> Answer a question! </h4>
 //           <div className='select_parentBox'>
 //            <select className='selectBox' type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
 //             {this.createSelectItems()}
 //            </select>
-//           </div>          
+//           </div>
 //         <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
 //         <DropdownToggle
 //           tag="span"
@@ -660,7 +621,7 @@ onDropdownSelected(e) {
 //         </DropdownMenu>
 //       </Dropdown>
 //             <p></p>
-//       <form className='questionForm'> 
+//       <form className='questionForm'>
 //           <input
 //             className='questionBox'
 //                 type='text'
@@ -699,7 +660,7 @@ onDropdownSelected(e) {
 //           Submit
 //           </button>
 //         </form>
-        
+
 //       </div>
 //       )
 //    }
