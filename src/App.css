@@ -110,8 +110,8 @@ li a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
   width:100%;
+  height: 100vh;
   font-family: 'Arvo', sans-serif; 
   background-color: black;
 }
@@ -125,7 +125,16 @@ li a:hover {
   line-height: 1; 
   text-align: center; 
   padding-bottom: 20px;
-  padding-top:150px;
+  padding-top:50px;
+}
+
+.title2 { 
+  color: white;
+  font-family: 'Roboto', serif; 
+  font-size: 20px; 
+  font-weight: bold;  
+  text-align: flex-start; 
+  padding-top:10px;
 }
 
 .formBox {
@@ -165,6 +174,8 @@ li a:hover {
   transition-duration: 0.4s;
   color: black;
   cursor: pointer;
+  font-family: Roboto;
+  font-weight: bold;
 }
 
 .submitButton:hover {
@@ -185,27 +196,31 @@ li a:hover {
 
 .questionBox {
   display: flex;
+  flex-direction: column;
   height: 100px;
   text-align: center;
+  border-radius: 3px;
+  border:none;
 }
 
 .tokens {
   display: flex;
   padding-right: 5px;
+  border: none;
+  border-radius: 5px;
 }
 
 .resolveDate {
   display: flex;
   padding-right: 5px; 
+  border:none;
+  border-radius: 5px;
 }
 
 .extras {
   padding-bottom: 20px;
 }
 
-.title2 {
-  color: white;
-}
 
 /* HOME*/
 
@@ -230,7 +245,7 @@ li a:hover {
   flex-direction: row;
   justify-content: flex-end;
   background-color: #f1f1f1;
-  height: 70px;
+  height: 80px;
 }
 
 .href {
@@ -307,12 +322,15 @@ li a:hover {
 .answQBox {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  padding-bottom:10px;
 }
 
 .labelBox {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%
 }
 
 .answer_parentBox {
@@ -326,6 +344,7 @@ li a:hover {
   width: 80%;
   align-items: center;
   font-weight: 800;
+  padding-bottom: 10px;
 }
 
 .selectBox {
@@ -334,12 +353,16 @@ li a:hover {
   font-family: Roboto;
   font-weight: 700;
   height: 63px;
+    border-radius: 5px;
+  border: none;
 }
 
 .answerBox1 {
   padding-bottom: 80px;
   text-overflow: break-word;
   overflow-wrap: break-word;
+  border-radius: 5px;
+  border: none;
 }
 
 .answerBox {
@@ -351,6 +374,8 @@ li a:hover {
   font-family: Roboto;
   font-weight: 800;
   text-overflow: break-word;
+  border-radius: 3px;
+  border: none;
 }
 
 .submitButton1 {
@@ -390,7 +415,8 @@ li a:hover {
   font-family: 'Arvo', sans-serif;
   font-weight: 700; 
   background-color: black;
-  color: white
+  color: white;
+  overflow:scroll;
 }
 
 .font {
@@ -398,10 +424,6 @@ li a:hover {
   flex-direction: column;
   font-family: 'Roboto';
   font-weight: 700;
-}
-
-.title4 {
-  color: red;
 }
 
 .container_result {
@@ -432,4 +454,60 @@ li a:hover {
   flex-direction: column;
   width: 100%;
   align-items: center;
+}
+
+
+/* MISC */
+
+.tokenDisplay {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-end;
+  padding-right: 25px;
+}
+
+.tokenText {
+  display: flex;
+  color: white;
+  font-family: Roboto;
+  padding-top: 20px;
+}
+
+.tokenText1 {
+  display: flex;
+  color: white;
+  font-family: Roboto;
+  cursor: pointer;
+}
+
+.logOutBox {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-right: 25px;
+  padding-bottom: 5px;
+
+}
+
+.submitButton9 {
+  display: flex;
+  height: 40px;
+  width: 20%;
+  border-radius: 3px;
+  border: none;
+  justify-content: center;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  color: black;
+  cursor: pointer;
+  font-family: Roboto;
+  font-weight: bold;
+}
+
+.submitButton9:hover {
+    background-color: red; 
+    color: white;
+    cursor: pointer;
 }

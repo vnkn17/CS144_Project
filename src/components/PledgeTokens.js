@@ -29,6 +29,7 @@ export default class PledgeTokens extends Component {
         Sony: 0
       },
       result: '',
+      numTokens: 420,
       answerIDTokens: []
     };
 
@@ -250,6 +251,17 @@ export default class PledgeTokens extends Component {
     );
   }
 
+  logoutClick = () => {
+    firebase.auth().signOut().then(function() {
+      // Sign-out successful.
+      console.log("Succesful signing out.");
+
+    }, function(error) {
+      // An error happened.
+      console.log("Error in signing out.");
+    });
+  }  
+
   render() {
     return (
       <div className='mainBox1'>
@@ -275,12 +287,19 @@ export default class PledgeTokens extends Component {
             </div>              
           </div>
         </div>
+        <div className='tokenDisplay'>
+          <h4 className='tokenText'>You own {this.state.numTokens} Tokens</h4>
+          <a className='tokenText1' href='www.google.com'>Buy more</a>
+        </div>        
         <div className='font'>
           {this.state.result ? this.renderResult() : this.renderQuiz()}
         </div>
         <button className='submitButton1' type='submit'>
             Submit
         </button>
+        <div className='logOutBox'>
+          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+        </div>        
       </div>
     );
   }

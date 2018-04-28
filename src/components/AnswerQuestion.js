@@ -11,6 +11,7 @@ const INITIAL_STATE = {
   tokensInEscrow : 0,
   resolveDate : '',
   selectedQuestionText : '',
+  numTokens: 420,
   currentAnswerList : [],
   proposedAnswer : '',
   error : null,
@@ -43,7 +44,7 @@ export default class AnswerQuestion extends Component {
       test: [],
       dropdownOpen: false
     };
-
+  
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
@@ -117,6 +118,15 @@ onDropdownSelected(e) {
     selectedValues = e.target.value;
     //here you will see the current selected value of the select input
 }
+    logoutClick = () => {
+      firebase.auth().signOut().then(function() {
+        // Sign-out successful.
+        console.log("Succesful signing out.");
+      }, function(error) {
+        // An error happened.
+        console.log("Error in signing out.");
+      });
+    } 
 
   onSubmit = (event) => {
     event.preventDefault();
@@ -254,9 +264,12 @@ onDropdownSelected(e) {
           </div>
         </div>
         <div className='answQBox'>
-          <div>
             <form className='answer_parentBox' onSubmit={this.onSubmit}>
             <label className='labelBox'>
+              <div className='tokenDisplay'>
+                <h4 className='tokenText'>You own {this.state.INITIAL_STATE.numTokens} Tokens</h4>
+                <a className='tokenText1' href='www.google.com'>Buy more</a>
+              </div>            
               <h4 className='title1'>Select a question to answer</h4>
               <div className='select_parentBox'>
                 <select className='selectBox' id="selectorBox" type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
@@ -264,7 +277,7 @@ onDropdownSelected(e) {
               </div>
             </label>
             <div className='answerBox'>
-              <input
+              <textarea
                 className='answerBox1'
                 type='text'
                 placeholder='Write answer here'
@@ -280,8 +293,10 @@ onDropdownSelected(e) {
             Submit
             </button>
             </form>
-          </div>
         </div>
+        <div className='logOutBox'>
+          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+        </div>        
       </div>
     )
   }

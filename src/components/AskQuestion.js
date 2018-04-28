@@ -3,7 +3,7 @@ import firebase from 'firebase';
 
 const INITIAL_STATE = {
   question: '',
-  numTokens: '',
+  numTokens: 420,
   resolveDate: '',
   error: null,
 };
@@ -16,6 +16,7 @@ export default class AskQuestion extends Component {
   constructor(props) {
     super(props);
     this.state = {INITIAL_STATE};
+
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
@@ -23,7 +24,8 @@ export default class AskQuestion extends Component {
         window.location.href = '/signin';
       }
     });
-  }
+  
+}
 
   logoutClick = () => {
     firebase.auth().signOut().then(function() {
@@ -35,6 +37,7 @@ export default class AskQuestion extends Component {
       console.log("Error in signing out.");
     });
   }
+
 
   onSubmit = (event) => {
     const {
@@ -171,6 +174,7 @@ export default class AskQuestion extends Component {
     ////////// END FIREBASE CODE
   }
 
+
   render () {
     const {
       question,
@@ -203,9 +207,13 @@ export default class AskQuestion extends Component {
             </div>              
           </div>
         </div>
+        <div className='tokenDisplay'>
+          <h4 className='tokenText'>You own {this.state.INITIAL_STATE.numTokens} Tokens</h4>
+          <a className='tokenText1' href='www.google.com'>Buy more</a>
+        </div>
       	<h1 className='title1'> Post a question! </h1>
       	<form className='questionForm' onSubmit = {this.onSubmit}>
-      		<input
+      		<textarea
       			className='questionBox'
             type='text'
             placeholder='Write question here...'
@@ -234,7 +242,9 @@ export default class AskQuestion extends Component {
       		  Submit
       		</button>
       	</form>
-        <button className='submitButton' onClick={this.logoutClick}>Log Out User</button>
+        <div className='logOutBox'>
+          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+        </div>
       </div>
     )
   }
