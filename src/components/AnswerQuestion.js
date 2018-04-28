@@ -513,11 +513,11 @@ onDropdownSelected(e) {
             // Need to deal with answer IDs, and other such things.
             // See User storage and question storage for examples.
             if(!snapshot.exists()) {
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers').set({
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers').set({
                 answerCount : 1,
                 answerData : {}
               });
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/0').set({
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/0').set({
                 answererID : currentUserID,
                 answerText : proposedAnswer,
                 tokensAwarded : 0
@@ -525,10 +525,10 @@ onDropdownSelected(e) {
             }
             else {
               var newAnswerID;
-              database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
                 newAnswerID = Number(snapshot.val());
-                database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
-                database.ref('/questions/questionData' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
+                database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
+                database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
                   answererID : currentUserID,
                   answerText : proposedAnswer,
                   tokensAwarded : 0
