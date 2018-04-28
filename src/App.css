@@ -23,6 +23,34 @@ code {
     }
 }
 
+ul {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; 
+  border: 1px solid #e7e7e7;
+  background-color: #f3f3f3;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+    background-color: #111;
+}
+
+
 .container {
   box-sizing: border-box;
   width: 100%;
@@ -115,13 +143,15 @@ code {
   text-align: center;
   width: 60%;
   margin-bottom: 10px;
-  border: none;
-  border-bottom: 1px solid gray;
+  border: 2px solid #dadada;
   border-radius:5px;
 }
 
 .inputField:focus::-webkit-input-placeholder {
     opacity: 0;
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 200px #9ecaed;
 }
 
 .submitButton {
@@ -140,6 +170,7 @@ code {
 .submitButton:hover {
     background-color: #008CBA; 
     color: white;
+    cursor: pointer;
 }
 
 
@@ -198,14 +229,29 @@ code {
   width: 100%;
   flex-direction: row;
   justify-content: flex-end;
-  background-color: #80cbc9;
+  background-color: #f1f1f1;
   height: 70px;
-  border-bottom-right-radius: 30px;
-  border-bottom-left-radius:30px;
 }
+
 .href {
-  color: #e7fcfc;
-  font-weight: bold; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height:100%;
+  color: black;
+  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
+}
+
+.href:hover {
+  background-color: #cfcdcc;
+  cursor:pointer;
+  border-bottom: 3px solid #7f807e;
+}
+
+.href:active {
+  border-bottom: 3px solid black;
 }
 
 .linkBox {
@@ -214,6 +260,7 @@ code {
   width: 100%;
   height: 100%;
   justify-content: center;
+  font-weight: bold;
 }
 
 .linksParentBox {
