@@ -13,7 +13,7 @@ const INITIAL_STATE = {
   error: null,
 };
 
-class SignIn extends Component { 
+class SignIn extends Component {
     constructor(props) {
     super(props);
     this.state = {INITIAL_STATE};
@@ -28,21 +28,20 @@ class SignIn extends Component {
 
     const {
       history,
-    } = this.props;  
+    } = this.props;
 
     var database = firebase.database();
 
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
-        // history.push('/askq');
+        console.log(firebase.auth().currentUser);
         window.location.href = '/askquestion';
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
       });
 
-    console.log(firebase.auth().currentUser);
 
     event.preventDefault();
 
@@ -56,8 +55,8 @@ class SignIn extends Component {
     //   // REDIRECT TO PAGE WITH ALL QUESTIONS LISTED
     // }
   }
-  
-  render () {  
+
+  render () {
       const {
       email,
       password,
@@ -66,7 +65,7 @@ class SignIn extends Component {
 
     const isInvalid =
       password === '' ||
-      email === ''; 
+      email === '';
 
       return (
         <div className='mainBox'>
@@ -74,13 +73,13 @@ class SignIn extends Component {
             <div className='linksParentBox'>
               <div className='linkBox'>
                 <a href="signup" className='href'> Sign Up</a>
-              </div>             
+              </div>
               <div className='linkBox'>
                 <a href="askquestion" className='href'> Ask Question</a>
               </div>
               <div className='linkBox'>
                 <a href="/" className='href'>Home</a>
-              </div> 
+              </div>
               <div className='linkBox'v>
                 <a href="answerquestion" className='href'> Answer Question</a>
               </div>
@@ -89,12 +88,12 @@ class SignIn extends Component {
               </div>
               <div className='linkBox'>
                 <a href="reviewtokens" className='href'> Review Tokens</a>
-              </div>  
+              </div>
             </div>
           </div>
           <h1 className='title1'>Sign in</h1>
           <form className='formBox' onSubmit={this.onSubmit}>
-            <input 
+            <input
               className='inputField'
               type='text'
               placeholder='Email or Username'
@@ -113,16 +112,13 @@ class SignIn extends Component {
               disabled={isInvalid}
               className='submitButton'
               type='submit'
-              /*onClick={() => this.signUp()}*/
             >
             Submit
             </button>
-            { error && <p>{error.message}</p> } 
+            { error && <p>{error.message}</p> }
           </form>
-        </div>  
+        </div>
       )
    }
 }
 export default withRouter(SignIn)
-
-
