@@ -1,4 +1,4 @@
-// import React, { Component } from 'react'
+unresolvedQuestionData// import React, { Component } from 'react'
 // import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
 // import { Button } from 'reactstrap';
 // import GithubUsers from './helpers/GithubUsers';
@@ -285,7 +285,6 @@ const INITIAL_STATE = {
   tokensInEscrow : 0,
   resolveDate : '',
   selectedQuestionText : '',
-  numTokens: 420,
   currentAnswerList : [],
   proposedAnswer : '',
   error : null,
@@ -296,12 +295,12 @@ const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
 });
 
-var globalAnswers = [];
+var unresolvedQuestionData = [];
 
 var selectedValues = [];
 
 function waitUntilDefined() {
-  if (typeof globalAnswers !== 'undefined' && typeof globalAnswers[0] != 'undefined') {
+  if (typeof unresolvedQuestionData !== 'undefined' && typeof unresolvedQuestionData[0] != 'undefined') {
     return;
   }
   else {
@@ -318,7 +317,7 @@ export default class AnswerQuestion extends Component {
       test: [],
       dropdownOpen: false
     };
-  
+
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
@@ -329,6 +328,8 @@ export default class AnswerQuestion extends Component {
 
     this.render();
 
+    console.log(firebase.auth().currentUser);
+
     window.onload = function() {
       // Parsing available questions to answer with Firebase:
       var database = firebase.database();
@@ -337,69 +338,53 @@ export default class AnswerQuestion extends Component {
       console.log("selector: " + dropdownSelector);
 
       database.ref('/questions/unresolved').once("value").then(function(snapshot) {
-        var dict = snapshot.val();
-        console.log(dict);
-        for (var key in dict) {
-          answerableInds.push(dict[key]);
+
+        var unresolvedDict = snapshot.val()
+        var qID = []
+        for (var key in unresolvedDict) {
+          if (!unresolvedDict[key].done) {
+            answerableInds.push(unresolvedDict[key]);
+          }
         }
-        console.log('check2');
 
         database.ref('/questions/questionData').once("value").then(function(snapshot) {
-          console.log("BIG TEST: " + snapshot.val()[0].text);
 
-          console.log(answerableInds);
           var snap = snapshot.val();
-
           for (var ind in answerableInds) {
             var qInfo = snap[answerableInds[ind].questionID];
-            globalAnswers.push(qInfo);
+            qID.push(answerableInds[ind].questionID)
+            unresolvedQuestionData.push(qInfo);
           }
 
-          console.log(globalAnswers);
-          console.log(globalAnswers[0]);
-          console.log("lol: " + globalAnswers[0].text);
-          console.log('answerable2 is');
-          console.log("answerableCarry:\n" + JSON.stringify(globalAnswers));
-
-          let answerable = globalAnswers;
           let l = 4;
           let items=[];
           var i = 0
-          for (var item in globalAnswers) {
-              console.log(globalAnswers[item]);
-              var optText = globalAnswers[item].text + " | " + globalAnswers[item].tokensPledged + " Tokens";
-              var optValue = [item, globalAnswers[item].askerID];
+          console.log(unresolvedQuestionData);
+          for (var item in unresolvedQuestionData) {
+              var optText = unresolvedQuestionData[item].text + " | " + unresolvedQuestionData[item].tokensPledged + " Tokens";
+              var optValue = [qID[item], unresolvedQuestionData[item].askerID];
               var el = document.createElement("option");
               el.textContent = optText;
               el.value = optValue;
               dropdownSelector.appendChild(el);
 
           }
-          console.log(items);
           return items;
         });
       });
     };
   }
 
-onDropdownSelected(e) {
-    console.log("THE VAL", e.target.value);
-    selectedValues = e.target.value;
-    //here you will see the current selected value of the select input
-}
-    logoutClick = () => {
-      firebase.auth().signOut().then(function() {
-        // Sign-out successful.
-        console.log("Succesful signing out.");
-      }, function(error) {
-        // An error happened.
-        console.log("Error in signing out.");
-      });
-    } 
+  onDropdownSelected(e) {
+      selectedValues = [Number(e.target.value.split(',')[0]), Number(e.target.value.split(',')[1])];
+      console.log(selectedValues);
+      //here you will see the current selected value of the select input
+  }
 
   onSubmit = (event) => {
     event.preventDefault();
 
+    console.log("HERE");
     const {
       // selectedQuestionID,
       askerIDb,
@@ -423,52 +408,64 @@ onDropdownSelected(e) {
     var currentUserID;
     var selectedQuestionID = selectedValues[0]; //document.getElementById("selectorBox").value()[0];
     var askerID = selectedValues[1]; //document.getElementById("selectorBox").value()[1];
-    console.log("selectedQuestionID: " + selectedQuestionID);
+    console.log("selectedvalues", selectedValues);
+    console.log("QID", selectedQuestionID);
+    console.log("askerID", askerID);
+
 
     // database.ref('/questions/questionData/' + selectedQuestionID + '/askerID').once("value").then(function(snapshot) {
     //   var askerID = Number(snapshot.val());
 
-      database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
-        console.log("Debugging issue: ", Number(snapshot.val()));
-        currentUserID = Number(snapshot.val());
-        console.log("currentUserID: " + currentUserID);
+    console.log('/users/emailsToIDs/' + email + '/userID');
+    database.ref('/users/emailsToIDs/' + email + '/userID').once("value").then(function(snapshot) {
+      console.log("Debugging issue: ", Number(snapshot.val()));
+      currentUserID = Number(snapshot.val());
+      console.log("currentUserID: " + currentUserID);
 
-        if (currentUserID === askerID) {
-          // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
-          window.location.href = "/askquestion";
-        }
-        else {
-          // window.location.href = "/askquestion";
-          database.ref('/questions/questionData/' + selectedQuestionID + '/answers').once("value").then(function(snapshot) {
-            // Do some stuff with parsing and attaching to answers array.
-            // Need to deal with answer IDs, and other such things.
-            // See User storage and question storage for examples.
-            if(!snapshot.exists()) {
-              database.ref('/questions/questionData/' + selectedQuestionID + '/answers').set({
-                answerCount : 1,
-                answerData : {}
-              });
-              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/0').set({
+      if (currentUserID === askerID) {
+        // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
+        window.location.href = "/askquestion";
+      }
+      else {
+        console.log("1");
+        // window.location.href = "/askquestion";
+        database.ref('/questions/questionData/' + selectedQuestionID + '/answers').once("value").then(function(snapshot) {
+          // Do some stuff with parsing and attaching to answers array.
+          // Need to deal with answer IDs, and other such things.
+          // See User storage and question storage for examples.
+          console.log("2");
+          console.log(selectedQuestionID);
+
+          if(!snapshot.exists()) {
+            console.log("3");
+
+            database.ref('/questions/questionData/' + selectedQuestionID + '/answers').set({
+              answerCount : 1,
+              answerData : {}
+            });
+            console.log("4");
+
+            database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/0').set({
+              answererID : currentUserID,
+              answerText : proposedAnswer,
+              tokensAwarded : 0
+            });
+          }
+          else {
+            var newAnswerID;
+            database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
+              newAnswerID = Number(snapshot.val());
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
+              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
                 answererID : currentUserID,
                 answerText : proposedAnswer,
                 tokensAwarded : 0
               });
-            }
-            else {
-              var newAnswerID;
-              database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').once("value").then(function(snapshot) {
-                newAnswerID = Number(snapshot.val());
-                database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerCount').set(newAnswerID + 1);
-                database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
-                  answererID : currentUserID,
-                  answerText : proposedAnswer,
-                  tokensAwarded : 0
-                });
-              });
-            }
-          });
-        }
-      });
+            });
+          }
+        });
+      }
+    });
     // });
 
     console.log("smart");
@@ -534,12 +531,9 @@ onDropdownSelected(e) {
           </div>
         </div>
         <div className='answQBox'>
+          <div>
             <form className='answer_parentBox' onSubmit={this.onSubmit}>
             <label className='labelBox'>
-              <div className='tokenDisplay'>
-                <h4 className='tokenText'>You own {this.state.INITIAL_STATE.numTokens} Tokens</h4>
-                <a className='tokenText1' href='www.google.com'>Buy more</a>
-              </div>            
               <h4 className='title1'>Select a question to answer</h4>
               <div className='select_parentBox'>
                 <select className='selectBox' id="selectorBox" type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
@@ -548,7 +542,7 @@ onDropdownSelected(e) {
               </div>
             </label>
             <div className='answerBox'>
-              <textarea
+              <input
                 className='answerBox1'
                 type='text'
                 placeholder='Write answer here'
@@ -559,15 +553,12 @@ onDropdownSelected(e) {
               className='submitButton1'
               type='submit'
               value='Submit'
-              onSubmit={event=>event.preventDefault()}
             >
             Submit
             </button>
             </form>
+          </div>
         </div>
-        <div className='logOutBox'>
-          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
-        </div>        
       </div>
     )
   }

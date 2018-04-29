@@ -66,6 +66,7 @@ export default class SignUp extends Component {
               ethAddress : newEthAddress,
               numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
             });
+            window.location.href = '/signin';
           }
           else {
             console.log("activated");
@@ -90,7 +91,6 @@ export default class SignUp extends Component {
                 numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
               });
               window.location.href = '/signin';
-              console.log("finished");
             });
           }
         });
