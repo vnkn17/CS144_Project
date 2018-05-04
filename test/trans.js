@@ -48,14 +48,14 @@ contract('Transaction', function(accounts) {
             return Transaction.deployed().then(function(instance) {
                   trans = instance;
                   //console.log(accounts[0]);
-                  return trans.addQuestioner(accounts[0], 2, 1);
+                  return trans.addQuestioner(accounts[0], 6, 1);
             }).then(function (result) {
                   //console.log(result);
                   return trans.getBalance.call(accounts[0]);
             }).then(function(stuff) {
                 //console.log(stuff);
                 yo = stuff.toNumber();
-                assert.equal(yo, 8, "Testing balance");
+                assert.equal(yo, 4, "Testing balance");
             });
       });
 
@@ -69,38 +69,18 @@ contract('Transaction', function(accounts) {
                   return trans.getBalance.call(accounts[1]);
             }).then(function(stuff) {
                 console.log(stuff);
-                yo = stuff.toNumber();
-                assert.equal(yo, 10, "Testing balance");
+                //yo = stuff.toNumber();
+                //assert.equal(yo, 10, "Testing balance");
+                return trans.addAnswerer(accounts[2], 1);
+            }).then(function(stuff) {
+                var distr = [2, 4];
+                return trans.executeTransaction(distr, 1);
+            }).then(function(stuff) {
+                return trans.getBalance.call(accounts[1]);
+            }).then(function(stuff) {
+                assert.equal(stuff.toNumber(), 12, "Testing distribution to account 2...");
             });
       });
-
-      it("Adding another answerer, answerer distribution, check token amount", function () {
-            var trans;
-            return Transaction.deployed().then(function(instance) {
-                  trans = instance;
-                  return trans.addAnswerer(accounts[2], 1);
-            }).then(function (result) {
-                  //console.log(result);
-                  var distribution = [1, 1];
-                  return trans.addAnswererDistribution(distribution, 1);
-            }).then(function(stuff) {
-                  return trans.executeTransaction(1);
-            }).then(function(stuff) {
-                  return trans.getBalance.call(accounts[1]);
-            }).then(function(stuff) {
-                //console.log(stuff);
-                yo = stuff.toNumber();
-                assert.equal(yo, 11, "Testing balance");
-                return trans.getBalance.call(accounts[2]);
-
-            }).then(function(stuff) {
-                //console.log(stuff);
-                yo = stuff.toNumber();
-                assert.equal(yo, 11, "Testing balance");
-
-            });
-      });
-
 
 
 

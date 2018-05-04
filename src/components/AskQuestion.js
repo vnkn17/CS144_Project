@@ -3,7 +3,7 @@ import firebase from 'firebase';
 
 const INITIAL_STATE = {
   question: '',
-  numTokens: 420,
+  numTokens: 0,
   resolveDate: '',
   error: null,
 };
@@ -12,20 +12,83 @@ const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
 });
 
+function changeTokenNum() {
+  var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
+  console.log("wat");
+  firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+    console.log("de");
+    var currentID = snapshot.val().userID;
+    firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
+      console.log("fuk");
+      var tkNum = Number(snapshot.val());
+      var tokenDisplay = document.getElementByClassName("tokenDisplay");
+      console.log("token display:\n" + tokenDisplay);
+      // tokenText.innerHTML = "You own " + tkNum + " Tokens";
+    });
+  });
+}
+
 export default class AskQuestion extends Component {
   constructor(props) {
     super(props);
-    this.state = {INITIAL_STATE};
+    this.state = INITIAL_STATE;
+
+    var st = this.state;
 
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
+        firebase.database().ref('/users/user')
+        // window.onload = function() {
+          // var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
+          // console.log("wat");
+          // firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+          //   console.log("de");
+          //   var currentID = snapshot.val().userID;
+          //   firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
+          //     console.log("fuk");
+          //     var tkNum = Number(snapshot.val());
+          //     st.numTokens = tkNum;
+          //     // var tokenDisplay = document.getElementByClassName("tokenDisplay");
+          //     // console.log("token display:\n" + tokenDisplay);
+          //     // tokenText.innerHTML = "You own " + tkNum + " Tokens";
+          //   });
+          // });
+        // }
+        // window.componentDidMount = changeTokenNum;
       } else {
         window.location.href = '/signin';
       }
     });
-  
+
 }
+
+  componentDidMount = () => {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("email: " + firebase.auth().currentUser.email);
+        firebase.database().ref('/users/user')
+        var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
+        console.log("wat");
+        firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+          console.log("de");
+          var currentID = snapshot.val().userID;
+          firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
+            console.log("fuk");
+            var tkNum = Number(snapshot.val());
+            // st.numTokens = tkNum;
+            var tokenDisplay = document.getElementsByClassName("tokenDisplay");
+            console.log("token display:\n" + tokenDisplay[0].innerHTML);
+            // tokenDisplay[0].innerHTML = "You own " + tkNum + " Tokens";
+            tokenDisplay[0].innerHTML = "<h4 className='tokenText' id='tokenText' font-family: 'Roboto', 'Roboto', sans-serif>You own " + tkNum + " Tokens</h4>\
+              <a className='tokenText1' href='www.google.com'>Buy more</a>;"
+          });
+        });
+      } else {
+        window.location.href = '/signin';
+      }
+    });
+  }
 
   logoutClick = () => {
     firebase.auth().signOut().then(function() {
@@ -148,9 +211,10 @@ export default class AskQuestion extends Component {
       transactionContract.deployed().then(function(instance) {
         transactionInstance = instance;
 
-
+        console.log("Inside the deployed");
         // Execute adopt as a transaction by sending account
-        transactionInstance.addQuestioner(account, numTokens, solidityQuestionId, {from: account}).then(function(result) {
+        transactionInstance.addQuestioner.sendTransaction(account, numTokens, solidityQuestionId, {from: account, gas: 100000}).then(function(result) {
+          console.log("Inside the add questioner");
           return transactionInstance.getBalance.call(account);
         }).then(function(current_balance) {
           console.log("Current balance: ", current_balance.toNumber());
@@ -195,7 +259,7 @@ export default class AskQuestion extends Component {
           </div>
         </div>
         <div className='tokenDisplay'>
-          <h4 className='tokenText'>You own {this.state.INITIAL_STATE.numTokens} Tokens</h4>
+          <h4 className='tokenText' id='tokenText'>You own {this.state.numTokens} Tokens</h4>
           <a className='tokenText1' href='www.google.com'>Buy more</a>
         </div>
       	<h1 className='title1'> Post a question! </h1>

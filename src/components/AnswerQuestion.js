@@ -488,7 +488,7 @@ export default class AnswerQuestion extends Component {
         transactionInstance = instance;
 
         // Execute adopt as a transaction by sending account
-        transactionInstance.addAnswerer(account, selectedQuestionID, {from: account}).then(function(result) {
+        transactionInstance.addAnswerer.sendTransaction(account, selectedQuestionID, {from: account, gas: 200000}).then(function(result) {
           console.log("Added Answerer Success", result.toString());
         });
 

@@ -278,7 +278,7 @@ export default class PledgeTokens extends Component {
       // An error happened.
       console.log("Error in signing out.");
     });
-  }  
+  }
 
   onSubmit = (event) => {
     event.preventDefault();
@@ -350,7 +350,7 @@ export default class PledgeTokens extends Component {
               console.log("QID:" , componentVariable.state.questionId);
               console.log("Token distribution: " , tokenDistribution);
               console.log("Account: ", account);
-              transactionInstance.executeTransaction(tokenDistribution, componentVariable.state.questionId, {from: account}).then(function(result) {
+              transactionInstance.executeTransaction(tokenDistribution, componentVariable.state.questionId, {from: account, gas: 200000}).then(function(result) {
                 for (var i = 0; i < 500; i++) {
                     console.log("transaction worked!");
                 }
@@ -394,7 +394,7 @@ export default class PledgeTokens extends Component {
           <h4 className='tokenText'>You own {this.state.numTokens} Tokens</h4>
           <a className='tokenText1' href='www.google.com'>Buy more</a>
         </div>
-        <form className='questionForm' onSubmit = {this.onSubmit}>        
+        <form className='questionForm' onSubmit = {this.onSubmit}>
           <div className='font'>
             {this.state.result ? this.renderResult() : this.renderQuiz()}
           </div>
@@ -404,7 +404,7 @@ export default class PledgeTokens extends Component {
         </form>
         <div className='logOutBox'>
           <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
-        </div>        
+        </div>
       </div>
     );
   }
