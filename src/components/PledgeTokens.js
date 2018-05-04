@@ -385,6 +385,9 @@ export default class PledgeTokens extends Component {
             <div className='linkBox'>
               <a href="answerquestion" className='href'> Answer Question</a>
             </div>
+            <div className='linkBox'>
+              <a href="reviewtokens" className='href'> Review Tokens</a>
+            </div>            
           </div>
         </div>
         <div className='tokenDisplay'>
@@ -395,7 +398,7 @@ export default class PledgeTokens extends Component {
           <div className='font'>
             {this.state.result ? this.renderResult() : this.renderQuiz()}
           </div>
-          <button className='submitButton1' type='submit'>
+          <button className='submitButton1' type='submit' onClick = {this.onSubmit}>
               Submit
           </button>
         </form>

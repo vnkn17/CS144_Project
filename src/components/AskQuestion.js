@@ -225,7 +225,7 @@ export default class AskQuestion extends Component {
               onChange={event => this.setState(byPropKey('resolveDate', event.target.value))}
       			/>
       		</div>
-      		<button className='submitButton' type='submit'>
+      		<button className='submitButton' type='submit' onClick = {this.onSubmit}>
       		  Submit
       		</button>
       	</form>

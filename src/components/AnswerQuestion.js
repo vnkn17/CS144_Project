@@ -315,7 +315,8 @@ export default class AnswerQuestion extends Component {
     this.state = {
       INITIAL_STATE,
       test: [],
-      dropdownOpen: false
+      dropdownOpen: false,
+      numTokens: 420,
     };
 
     firebase.auth().onAuthStateChanged(function(user) {
@@ -528,12 +529,19 @@ export default class AnswerQuestion extends Component {
             <div className='linkBox'>
               <a href="pledgetokens" className='href'> Pledge Tokens</a>
             </div>
+            <div className='linkBox'>
+              <a href="reviewtokens" className='href'> Review Tokens</a>
+            </div>            
           </div>
         </div>
         <div className='answQBox'>
           <div>
             <form className='answer_parentBox' onSubmit={this.onSubmit}>
             <label className='labelBox'>
+              <div className='tokenDisplay'>
+                <h4 className='tokenText'>You own {this.state.numTokens} Tokens</h4>
+                <a className='tokenText1' href='www.google.com'>Buy more</a>
+              </div>            
               <h4 className='title1'>Select a question to answer</h4>
               <div className='select_parentBox'>
                 <select className='selectBox' id="selectorBox" type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
@@ -559,6 +567,9 @@ export default class AnswerQuestion extends Component {
             </form>
           </div>
         </div>
+        <div className='logOutBox'>
+          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+        </div>        
       </div>
     )
   }
