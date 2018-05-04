@@ -60,9 +60,9 @@ export default class AskQuestion extends Component {
         window.location.href = '/signin';
       }
     });
-  
+
 }
-  
+
   componentDidMount = () => {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
@@ -211,9 +211,10 @@ export default class AskQuestion extends Component {
       transactionContract.deployed().then(function(instance) {
         transactionInstance = instance;
 
-
+        console.log("Inside the deployed");
         // Execute adopt as a transaction by sending account
-        transactionInstance.addQuestioner(account, numTokens, solidityQuestionId, {from: account}).then(function(result) {
+        transactionInstance.addQuestioner.sendTransaction(account, numTokens, solidityQuestionId, {from: account, gas: 100000}).then(function(result) {
+          console.log("Inside the add questioner");
           return transactionInstance.getBalance.call(account);
         }).then(function(current_balance) {
           console.log("Current balance: ", current_balance.toNumber());

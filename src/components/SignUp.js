@@ -115,9 +115,10 @@ export default class SignUp extends Component {
       var account = accounts[0];
       transactionContract.deployed().then(function(instance) {
         transactionInstance = instance;
-
+        console.log("INSIDE DEPLOYED TRANSACTION");
         // Execute adopt as a transaction by sending account, check balance.
-        transactionInstance.accountCreation(account, {from: account}).then(function(result) {
+        transactionInstance.accountCreation.sendTransaction(account, {from: account, gas: 100000}).then(function(result) {
+          console.log("INSIDE ACCOUNT CREATION");
           return transactionInstance.getBalance.call(account);
         }).then(function(current_balance) {
           console.log("Current balance: ", current_balance.toNumber());
