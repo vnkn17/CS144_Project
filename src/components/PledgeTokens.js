@@ -47,6 +47,33 @@ export default class PledgeTokens extends Component {
 
   }
 
+  componentDidMount = () => {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("email: " + firebase.auth().currentUser.email);
+        firebase.database().ref('/users/user')
+        var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
+        console.log("wat");
+        firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+          console.log("de");
+          var currentID = snapshot.val().userID;
+          firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
+            console.log("fuk");
+            var tkNum = Number(snapshot.val());
+            // st.numTokens = tkNum;
+            var tokenDisplay = document.getElementsByClassName("tokenDisplay");
+            console.log("token display:\n" + tokenDisplay[0].innerHTML);
+            // tokenDisplay[0].innerHTML = "You own " + tkNum + " Tokens";
+            tokenDisplay[0].innerHTML = "<h4>You own " + tkNum + " Tokens</h4>\
+              <a className='tokenText1' href='www.google.com'>Buy more</a>"
+          });
+        });
+      } else {
+        window.location.href = '/signin';
+      }
+    });
+  }    
+
   handler(idOfAnswer, tokensAwarded, answererID) {
     var pair =
       {idOfAnswer: idOfAnswer,
@@ -367,7 +394,7 @@ export default class PledgeTokens extends Component {
 
   render() {
     return (
-      <div className='mainBox1'>
+      <div className='mainBox'>
         <div className='headerBox'>
           <div className='linksParentBox'>
             <div className='linkBox'>
@@ -391,8 +418,6 @@ export default class PledgeTokens extends Component {
           </div>
         </div>
         <div className='tokenDisplay'>
-          <h4 className='tokenText'>You own {this.state.numTokens} Tokens</h4>
-          <a className='tokenText1' href='www.google.com'>Buy more</a>
         </div>
         <form className='questionForm' onSubmit = {this.onSubmit}>
           <div className='font'>

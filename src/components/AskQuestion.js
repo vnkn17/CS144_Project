@@ -4,6 +4,7 @@ import firebase from 'firebase';
 const INITIAL_STATE = {
   question: '',
   numTokens: 0,
+  tokensOwned: 99,
   resolveDate: '',
   error: null,
 };
@@ -11,22 +12,6 @@ const INITIAL_STATE = {
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value,
 });
-
-function changeTokenNum() {
-  var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
-  console.log("wat");
-  firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
-    console.log("de");
-    var currentID = snapshot.val().userID;
-    firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
-      console.log("fuk");
-      var tkNum = Number(snapshot.val());
-      var tokenDisplay = document.getElementByClassName("tokenDisplay");
-      console.log("token display:\n" + tokenDisplay);
-      // tokenText.innerHTML = "You own " + tkNum + " Tokens";
-    });
-  });
-}
 
 export default class AskQuestion extends Component {
   constructor(props) {
@@ -39,23 +24,6 @@ export default class AskQuestion extends Component {
       if (user) {
         console.log("email: " + firebase.auth().currentUser.email);
         firebase.database().ref('/users/user')
-        // window.onload = function() {
-          // var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
-          // console.log("wat");
-          // firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
-          //   console.log("de");
-          //   var currentID = snapshot.val().userID;
-          //   firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
-          //     console.log("fuk");
-          //     var tkNum = Number(snapshot.val());
-          //     st.numTokens = tkNum;
-          //     // var tokenDisplay = document.getElementByClassName("tokenDisplay");
-          //     // console.log("token display:\n" + tokenDisplay);
-          //     // tokenText.innerHTML = "You own " + tkNum + " Tokens";
-          //   });
-          // });
-        // }
-        // window.componentDidMount = changeTokenNum;
       } else {
         window.location.href = '/signin';
       }
@@ -80,8 +48,8 @@ export default class AskQuestion extends Component {
             var tokenDisplay = document.getElementsByClassName("tokenDisplay");
             console.log("token display:\n" + tokenDisplay[0].innerHTML);
             // tokenDisplay[0].innerHTML = "You own " + tkNum + " Tokens";
-            tokenDisplay[0].innerHTML = "<h4 className='tokenText' id='tokenText' font-family: 'Roboto', 'Roboto', sans-serif>You own " + tkNum + " Tokens</h4>\
-              <a className='tokenText1' href='www.google.com'>Buy more</a>;"
+            tokenDisplay[0].innerHTML = "<h4>You own " + tkNum + " Tokens</h4>\
+            <a href='/askquestion'>Buy more</a>"
           });
         });
       } else {
@@ -259,8 +227,6 @@ export default class AskQuestion extends Component {
           </div>
         </div>
         <div className='tokenDisplay'>
-          <h4 className='tokenText' id='tokenText'>You own {this.state.numTokens} Tokens</h4>
-          <a className='tokenText1' href='www.google.com'>Buy more</a>
         </div>
       	<h1 className='title1'> Post a question! </h1>
       	<form className='questionForm' onSubmit = {this.onSubmit}>

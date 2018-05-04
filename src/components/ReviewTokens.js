@@ -19,6 +19,33 @@ export default class ReviewTokens extends Component {
     this.render();    
   }
 
+  componentDidMount = () => {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("email: " + firebase.auth().currentUser.email);
+        firebase.database().ref('/users/user')
+        var email = (firebase.auth().currentUser.email).replace(/\./g, '_');
+        console.log("wat");
+        firebase.database().ref('/users/emailsToIDs/' + email).once("value").then(function(snapshot) {
+          console.log("de");
+          var currentID = snapshot.val().userID;
+          firebase.database().ref('/users/userData/' + currentID + '/numTokens').once("value").then(function(snapshot) {
+            console.log("fuk");
+            var tkNum = Number(snapshot.val());
+            // st.numTokens = tkNum;
+            var tokenDisplay = document.getElementsByClassName("tokenDisplay");
+            console.log("token display:\n" + tokenDisplay[0].innerHTML);
+            // tokenDisplay[0].innerHTML = "You own " + tkNum + " Tokens";
+            tokenDisplay[0].innerHTML = "<h4>You own " + tkNum + " Tokens</h4>\
+              <a className='tokenText1' href='www.google.com'>Buy more</a>"
+          });
+        });
+      } else {
+        window.location.href = '/signin';
+      }
+    });
+  } 
+
   logoutClick = () => {
     firebase.auth().signOut().then(function() {
       // Sign-out successful.
@@ -42,6 +69,9 @@ export default class ReviewTokens extends Component {
                 <a href="signup" className='href'> Sign Up</a>
               </div>
               <div className='linkBox'>
+                <a href="/" className='href'>Home</a>
+              </div>              
+              <div className='linkBox'>
                 <a href="askquestion" className='href'> Ask Question</a>
               </div>
               <div className='linkBox'v>
@@ -53,8 +83,6 @@ export default class ReviewTokens extends Component {
             </div>
           </div>
           <div className='tokenDisplay'>
-            <h4 className='tokenText'>You own {this.state.numTokens} Tokens</h4>
-            <a className='tokenText1' href='www.google.com'>Buy more</a>
           </div>           
           <div className='contentBox'>
             <div className='select_parentBox'>

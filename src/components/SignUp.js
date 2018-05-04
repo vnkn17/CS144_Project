@@ -30,6 +30,7 @@ export default class SignUp extends Component {
     var database = firebase.database();
 
     if (passwordOne !== passwordTwo) {
+      alert('Passwords must match!');
       // Return some error message saying that passwords must match (front-end).
     }
 
@@ -37,7 +38,7 @@ export default class SignUp extends Component {
       .then(authUser => {
         this.setState(() => ({ ...INITIAL_STATE }));
 
-        console.log('this.state', this.state)
+        console.log('this.state', this.state);
 
         database.ref('/users').once("value").then(function(snapshot) {
 
@@ -97,8 +98,9 @@ export default class SignUp extends Component {
 
       })
       .catch(error => {
-        this.setState(byPropKey('error', error));
-        console.log(this.state.error)
+        alert(error);
+        // this.setState(byPropKey('error', error));
+        // console.log(this.state.error)
       });
 
     event.preventDefault();
@@ -155,7 +157,7 @@ export default class SignUp extends Component {
             <div className='linkBox'>
               <a href="/" className='href'> Home</a>
             </div>
-            <div className='linkBox'v>
+            <div className='linkBox'>
               <a href="answerquestion" className='href'> Answer Question</a>
             </div>
             <div className='linkBox'>

@@ -35,11 +35,15 @@ class SignIn extends Component {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(() => ({ ...INITIAL_STATE }));
+        // console.log('logging in')
         console.log(firebase.auth().currentUser);
         window.location.href = '/askquestion';
       })
       .catch(error => {
-        this.setState(byPropKey('error', error));
+        // console.log('firebase error is');
+        alert(error);
+        // this.setState(byPropKey('error', error));
+        // alert("Wrong Email/Password combination! \nTry again!");
       });
 
 
