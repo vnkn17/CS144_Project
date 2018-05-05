@@ -12,8 +12,7 @@ This code contains the functionality for the QuesToken platform. The frontend is
 Run the following commands in your CLI in order to install the required packages on your machine to run QuesToken on your localserver (note that the default website is at https://localhost:3000).
 ```
 // Install Node Package Manager (if needed)
-0. curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-1. sudo apt-get install -y nodejs
+1. brew install node
 
 // Check Node successfully installed
 2. node -v
