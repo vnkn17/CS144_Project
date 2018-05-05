@@ -114,7 +114,7 @@ export default class AnswerQuestion extends Component {
       // An error happened.
       console.log("Error in signing out.");
     });
-  }  
+  }
 
   onDropdownSelected(e) {
       selectedValues = [Number(e.target.value.split(',')[0]), Number(e.target.value.split(',')[1])];
@@ -180,6 +180,12 @@ export default class AnswerQuestion extends Component {
           if(!snapshot.exists()) {
             console.log("3");
 
+            // Insert reviewerCount and reviewerId for the first time.
+            database.ref('/questions/questionData/' + selectedQuestionID + '/reviewers').set({
+              reviewerCount: 0,
+              reviewerData: {}
+            });
+
             database.ref('/questions/questionData/' + selectedQuestionID + '/answers').set({
               answerCount : 1,
               answerData : {}
@@ -189,7 +195,8 @@ export default class AnswerQuestion extends Component {
             database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/0').set({
               answererID : currentUserID,
               answerText : proposedAnswer,
-              tokensAwarded : 0
+              tokensAwarded : 0,
+              reviewerRatings: {}
             });
           }
           else {
@@ -200,7 +207,8 @@ export default class AnswerQuestion extends Component {
               database.ref('/questions/questionData/' + selectedQuestionID + '/answers/answerData/' + newAnswerID).set({
                 answererID : currentUserID,
                 answerText : proposedAnswer,
-                tokensAwarded : 0
+                tokensAwarded : 0,
+                reviewerRatings: {}
               });
             });
           }
@@ -263,7 +271,7 @@ export default class AnswerQuestion extends Component {
         window.location.href = '/signin';
       }
     });
-  }  
+  }
 
   toggle() {
     this.setState({
@@ -298,15 +306,15 @@ export default class AnswerQuestion extends Component {
             </div>
             <div className='linkBox'>
               <a href="reviewtokens" className='href'> Review Tokens</a>
-            </div>            
+            </div>
           </div>
         </div>
         <div className='tokenDisplay'>
-        </div>        
+        </div>
         <div className='answQBox'>
           <div>
             <form className='answer_parentBox' onSubmit={this.onSubmit}>
-            <label className='labelBox'>            
+            <label className='labelBox'>
               <h4 className='title1'>Select a question to answer</h4>
               <div className='select_parentBox'>
                 <select className='selectBox' id="selectorBox" type="select" onChange={this.onDropdownSelected} label="Multiple Select" multiple>
@@ -333,7 +341,7 @@ export default class AnswerQuestion extends Component {
         </div>
         <div className='logOutBox'>
           <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
-        </div>        
+        </div>
       </div>
     )
   }

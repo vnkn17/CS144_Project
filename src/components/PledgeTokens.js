@@ -72,15 +72,25 @@ export default class PledgeTokens extends Component {
         window.location.href = '/signin';
       }
     });
-  }    
+  }
 
   handler(idOfAnswer, tokensAwarded, answererID) {
-    var pair =
-      {idOfAnswer: idOfAnswer,
-      tokensAwarded: Number(tokensAwarded),
-      answererID: answererID};
-    console.log("pair", pair);
-    var joined = this.state.answerIDTokens.concat(pair);
+    var found = false;
+    for (var i = 0; i < this.state.answerIDTokens.length; i++)  {
+      if (this.state.answerIDTokens[i].idOfAnswer == idOfAnswer)  {
+        this.state.answerIDTokens[i].tokensAwarded = Number(tokensAwarded);
+        found = true;
+        break;
+      }
+    }
+    var joined = this.state.answerIDTokens;
+    if (!found) {
+      var pair =
+        {idOfAnswer: idOfAnswer,
+        tokensAwarded: Number(tokensAwarded),
+        answererID: answererID};
+      joined = this.state.answerIDTokens.concat(pair);
+    }
     this.setState({ answerIDTokens: joined });
   }
 
@@ -377,10 +387,10 @@ export default class PledgeTokens extends Component {
               console.log("QID:" , componentVariable.state.questionId);
               console.log("Token distribution: " , tokenDistribution);
               console.log("Account: ", account);
-              transactionInstance.executeTransaction(tokenDistribution, componentVariable.state.questionId, {from: account, gas: 200000}).then(function(result) {
-                for (var i = 0; i < 500; i++) {
+              transactionInstance.executeTransaction(tokenDistribution, componentVariable.state.questionId, {from: account, gas: 600000}).then(function(result) {
+                //for (var i = 0; i < 500; i++) {
                     console.log("transaction worked!");
-                }
+                //}
               });
             });
           });
@@ -414,7 +424,7 @@ export default class PledgeTokens extends Component {
             </div>
             <div className='linkBox'>
               <a href="reviewtokens" className='href'> Review Tokens</a>
-            </div>            
+            </div>
           </div>
         </div>
         <div className='tokenDisplay'>
