@@ -60,7 +60,7 @@ li a:hover {
   width: 100%;
   padding: 45px 20px;
   height: 100%;
-  color: white;
+  color: black;
 }
 
 .pure-button-primary {
@@ -441,7 +441,9 @@ li a:hover {
 }
 
 .white {
+  background-color: black;
   color: white;
+  border:none;
 }
 
 .red {
@@ -451,7 +453,12 @@ li a:hover {
 .black {
   display: flex;
   flex-direction: column;
+  background-color: white;
   color: black;
+  font-family: Roboto; 
+  font-weight: 700;
+  border:none;
+  border-radius: 3px;
 }
 
 /* Review Tokens page  */
@@ -516,6 +523,28 @@ li a:hover {
 }
 
 .submitButton9:hover {
+    background-color: red; 
+    color: white;
+    cursor: pointer;
+}
+
+
+.submitButton8 {
+  display: flex;
+  height: 40px;
+  width: 20%;
+  border-radius: 3px;
+  border: none;
+  justify-content: center;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  color: black;
+  cursor: pointer;
+  font-family: Roboto;
+  font-weight: bold;
+}
+
+.submitButton8:hover {
     background-color: red; 
     color: white;
     cursor: pointer;

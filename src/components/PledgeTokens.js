@@ -421,6 +421,7 @@ export default class PledgeTokens extends Component {
         </div>
         <form className='questionForm' onSubmit = {this.onSubmit}>
           <div className='font'>
+          {/*if (condition=true) return this.renderResult() else this.renderQuiz()*/}
             {this.state.result ? this.renderResult() : this.renderQuiz()}
           </div>
           <button className='submitButton1' type='submit' onClick = {this.onSubmit}>
@@ -428,7 +429,7 @@ export default class PledgeTokens extends Component {
           </button>
         </form>
         <div className='logOutBox'>
-          <button className='submitButton9' onClick={this.logoutClick}>Log Out</button>
+          <button className='submitButton8' onClick={this.logoutClick}>Log Out</button>
         </div>
       </div>
     );
