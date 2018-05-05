@@ -374,6 +374,7 @@ export default class ReviewTokens extends Component {
           database.ref('/questions/questionData/' + selectedQuestionID + '/reviewers/reviewerData/' + newReviewerNumber).set({
             reviewerID : componentVariable.state.curID
           });
+          console.log("HERE ", componentVariable.state.curID);
           database.ref('/questions/unresolved/' + selectedQuestionID + '/reviewerCount').set(newReviewerNumber + 1);
 
 
@@ -382,6 +383,12 @@ export default class ReviewTokens extends Component {
             var rating = reviewDistribution[i];
             database.ref('/questions/questionData/' + componentVariable.state.questionId + '/answers/answerData/' + i + '/reviewerRatings/' + newReviewerNumber).set(rating);
           }
+
+          database.ref('/users/userData/' + componentVariable.state.curID + '/numTokens').once("value").then(function(snapshot) {
+            var currentTokenNum = Number((snapshot.val()));
+            var numTokens = Math.floor(Math.random()*(10-5+1)+5);
+            database.ref('/users/userData/' + componentVariable.state.curID + '/numTokens').set(currentTokenNum + numTokens);
+          });
 
           // Once 3 reviewers...
           if(newReviewerNumber == 2) {
@@ -392,6 +399,8 @@ export default class ReviewTokens extends Component {
             database.ref('/questions/questionData/' + componentVariable.state.questionId + '/answers/answerData/').once("value").then(function(answerSnap) {
               var answer = answerSnap.val();
               var pledgeList = [];
+              var modifiedReviewList = [];
+              var strike = false;
 
               for(var i = 0; i < answer.length; i++) {
                 pledgeList.push(answer[i].tokensAwarded);
@@ -406,11 +415,63 @@ export default class ReviewTokens extends Component {
                 }
                 reviewDistributions.push(dist);
               }
-              // DO SOME Math
+
+              // DO SOME MATHEMATICS
+              console.log(pledgeList)
+              // Review Distributions: List of List of ratings for every questions.
+              // Each list should have 3 responses.
+              var average;
+              for(var k = 0; k < reviewDistributions.length; k++)
+              {
+                var average = 0;
+                average += reviewDistributions[k];
+                average = average/3;
+                modifiedReviewList.push(average);
+              }
+              var pledgeone = modifiedReviewList[0];
+              var pledgetwo = modifiedReviewList[1];
+              var pledgethree = modifiedReviewList[2];
+
+              var modifiedReviewOne = 100 * (pledgeone - 1)/(pledgeone + pledgetwo + pledgethree - 3);
+              var modifiedReviewTwo = 100 * (pledgetwo - 1)/(pledgeone + pledgetwo + pledgethree - 3);
+              var modifiedReviewThree = 100 * (pledgetwo - 1)/(pledgeone + pledgetwo + pledgethree - 3);
 
 
-              // AFTER THE MATH
-              var strike = false; 
+              modifiedReviewList[0] = modifiedReviewOne;
+              modifiedReviewList[1] = modifiedReviewTwo;
+              modifiedReviewList[2] = modifiedReviewThree;
+
+              var penalty = 0;
+              var differenceone =  pledgeList[0] - modifiedReviewList[0] ;
+              if(differenceone > 0)
+              {
+                  penalty += differenceone * differenceone;
+              }
+              var differencetwo =  pledgeList[1] - modifiedReviewList[1] ;
+              if(differencetwo > 0)
+              {
+                  penalty += differencetwo * differencetwo;
+              }
+              var differencethree =  pledgeList[2] - modifiedReviewList[2] ;
+              if(differencethree > 0)
+              {
+                  penalty += differencethree * differencethree;
+              }
+              if(penalty >= 2500)
+              {
+                strike = true;
+
+              }
+              console.log(strike);
+
+              // Get the id of the asker and mark them as a strike.
+              if(strike) {
+                database.ref('/questions/questionData/' + componentVariable.state.questionId + '/askerID').once("value").then(function(snapshot) {
+                  var askerID = Number(snapshot.val());
+                  database.ref('/users/userData/' + askerID + '/strike').set(true);
+
+                });
+              }
 
             });
 

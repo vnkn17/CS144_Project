@@ -359,6 +359,9 @@ export default class PledgeTokens extends Component {
 
           }
 
+          // Update tokensAwarded (sucess message?)
+          alert('Tokens successfully awarded!');
+
         }
     });
 
@@ -368,8 +371,9 @@ export default class PledgeTokens extends Component {
 
         // First, check if correct number of tokens allocated.
         if(pledgedTokens != computedTotalTokens) {
-          console.log("Error, incorrect pledged amount....");
+          alert("Error, incorrect pledged amount....");
         } else {
+
           // Solidity Integration giving tokens
           var transactionContract = componentVariable.props.transcontract;
           var transactionInstance;
@@ -390,6 +394,7 @@ export default class PledgeTokens extends Component {
               transactionInstance.executeTransaction(tokenDistribution, componentVariable.state.questionId, {from: account, gas: 600000}).then(function(result) {
                 //for (var i = 0; i < 500; i++) {
                     console.log("transaction worked!");
+                    location.reload();
                 //}
               });
             });
@@ -398,9 +403,6 @@ export default class PledgeTokens extends Component {
         }
       });
 
-      // Update tokensAwarded (sucess message?)
-      alert('Tokens successfully awarded!');
-      location.reload();
   }
 
   render() {

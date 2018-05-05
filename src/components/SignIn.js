@@ -37,7 +37,28 @@ class SignIn extends Component {
         this.setState(() => ({ ...INITIAL_STATE }));
         // console.log('logging in')
         console.log(firebase.auth().currentUser);
-        window.location.href = '/askquestion';
+
+        // Get user id and then check for strike.
+        // Alert if that is the case.
+        var emailStripped = email.replace(/\./g, '_');
+        console.log(emailStripped);
+        database.ref('/users/emailsToIDs/' + emailStripped + '/userID').once("value").then(function(snapshot) {
+          var id = Number(snapshot.val());
+          database.ref('/users/userData/' + id + '/strike').once("value").then(function(strikeSnap) {
+              var strike = strikeSnap.val();
+              if(strike) {
+                firebase.auth().signOut().then(function() {
+                  alert("You have a strike because of improper token distributions");
+                  window.location.href = '/signin';
+                }, function(error) {
+                  console.log("Error in signing out.");
+                });
+              } else {
+                window.location.href = '/askquestion';
+              }
+          });
+
+        });
       })
       .catch(error => {
         // console.log('firebase error is');

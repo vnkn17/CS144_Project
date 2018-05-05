@@ -65,6 +65,7 @@ export default class SignUp extends Component {
               numAnswers : 0,
               numCorrectAnswers : 0,
               ethAddress : newEthAddress,
+              strike : false,
               numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
             });
             window.location.href = '/signin';
@@ -89,6 +90,7 @@ export default class SignUp extends Component {
                 numAnswers : 0,
                 numCorrectAnswers : 0,
                 ethAddress : newEthAddress,
+                strike : false, 
                 numTokens : 50 // Or whatever we change this number to. Must also be reflected in smart contract.
               });
               window.location.href = '/signin';
