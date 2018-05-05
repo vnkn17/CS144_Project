@@ -122,27 +122,32 @@ export default class ReviewTokens extends Component {
                   console.log("length: ", unresolvedQuestions.length);
 
                   for (var i = 0; i < unresolvedQuestions.length; i++) {
-                      var found = true;
 
-                      for(var j = 0; j < questData[i].answers.answerCount; j++) {
-                          if(questData[i].answers.answerData[j].answererID == currentUserID) {
-                            found = false;
-                            break;
-                          }
-                      }
+                      if (globalSnap.child("questionData").child(i).hasChild("answers") && globalSnap.child("questionData").child(i).hasChild("reviewers")) {
+                          // run some code
 
-                      var review = true;
-                      for(var k = 0; k < questData[i].reviewers.reviewerCount; k++) {
-                          if(questData[i].reviewers.reviewerData[k].reviewerID == currentUserID) {
-                            review = false;
-                            break;
-                          }
-                      }
+                        var found = true;
+                        for(var j = 0; j < questData[i].answers.answerCount; j++) {
+                            if(questData[i].answers.answerData[j].answererID == currentUserID) {
+                              found = false;
+                              break;
+                            }
+                        }
+
+                        var review = true;
+                        for(var k = 0; k < questData[i].reviewers.reviewerCount; k++) {
+                            if(questData[i].reviewers.reviewerData[k].reviewerID == currentUserID) {
+                              review = false;
+                              break;
+                            }
+                        }
 
 
-                      if (review && found && unresolvedQuestions[i].reviewerCount < 3 && unresolvedQuestions[i].done == true && unresolvedQuestions[i].askerID != currentUserID) {
-                        questionStorageID = unresolvedQuestions[i].questionID;
-                        break;
+                        if (review && found && unresolvedQuestions[i].reviewerCount < 3 && unresolvedQuestions[i].done == true && unresolvedQuestions[i].askerID != currentUserID) {
+                          questionStorageID = unresolvedQuestions[i].questionID;
+                          break;
+                        }
+
                       }
                     }
 
@@ -355,6 +360,32 @@ export default class ReviewTokens extends Component {
           if(newReviewerNumber == 2) {
             console.log("Enter 3 reviewers...");
 
+
+            // Get the tokens pledged for a certain question.
+            database.ref('/questions/questionData/' + componentVariable.state.questionId + '/answers/answerData/').once("value").then(function(answerSnap) {
+              var answer = answerSnap.val();
+              var pledgeList = [];
+
+              for(var i = 0; i < answer.length; i++) {
+                pledgeList.push(answer[i].tokensAwarded);
+              }
+
+              var reviewDistributions = [];
+              for (var i = 0; i < answer.length; i++) {
+                var specificDistribution = answer[i].reviewerRatings;
+                var dist = [];
+                for(var j = 0; j < specificDistribution.length; j++) {
+                  dist.push(specificDistribution[j]);
+                }
+                reviewDistributions.push(dist);
+              }
+              // DO SOME Math
+
+
+              // AFTER THE MATH
+              var strike = false; 
+
+            });
 
           }
         });
