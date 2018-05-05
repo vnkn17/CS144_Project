@@ -56,7 +56,7 @@ in the tutorial, create a Custom RPC and enter http://127.0.0.1:7545.
 
 The following describes the functionality implemented by each file.
 The React App is rendered in *index.js*. The components (different pages) are linked to in *App.js* and implemented in *src\components*. Below is the description of the functions within each page/component (routes given in paranthesis after the file names)
-**Note that the code in *App.js*, *App.cs* and the *components* folder was written by the team.**
+**Note that the code in *App.js*, *App.cs*, *components*, *test*, *contracts*, *src* folders was written by the team.**
 #
 ##### Home.js &nbsp;&nbsp;&nbsp;(_https://localhost:3000/_)
 Renders main navigation page. Click Sign Up to start the sign up process.
