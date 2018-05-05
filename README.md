@@ -5,7 +5,7 @@
 #
 #
 ## Synopsis
-This code contains the functionality for the QuesToken platform. The frontend is written with Node.JS using the React library while the backend uses Solidity (since QuesToken is based on the Ethereum platform) and the (live) database is hosted on Google Firebase.
+This code contains the functionality for the QuesToken platform. The frontend is written with Node.JS using the React library while the backend uses Solidity (since QuesToken is based on the Ethereum platform) and the (live) database is hosted on Google Firebase. Ganache and Metamask were utilized for testing. 
 
 ## Installation
 
