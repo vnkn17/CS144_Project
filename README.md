@@ -5,7 +5,7 @@
 #
 #
 ## Synopsis
-This code contains the functionality for the QuesToken platform. The frontend is written with Node.JS using the React library while the backend uses Solidity (since QuesToken is based on the Ethereum platform) and the (live) database is hosted on Google Firebase. Ganache and Metamask were utilized for testing. 
+This code contains the functionality for the QuesToken platform. The frontend is written with Node.JS using the React library while the backend uses Solidity (since QuesToken is based on the Ethereum platform) and the (live) database is hosted on Google Firebase. Ganache and Metamask were utilized for testing.
 
 ## Installation
 
@@ -35,8 +35,8 @@ Run the following commands in your CLI in order to install the required packages
 // .json files in /build/contracts and then recompile.
 6. truffle compile
 
-// To migrate the instances of the smart contracts,
-// first start ganache. Run the following command:
+// Install Ganache and start Ganache.
+// To migrate contracts to the private blockchain, run the following command:
 7. truffle migrate
 
 8. Get Metamask. We tested on Chrome.
