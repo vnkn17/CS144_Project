@@ -7,9 +7,14 @@
 ## Synopsis
 This code contains the functionality for the QuesToken platform. The frontend is written with Node.JS using the React library while the backend uses Solidity (since QuesToken is based on the Ethereum platform) and the (live) database is hosted on Google Firebase. Ganache and Metamask were utilized for testing.
 
-## Installation
+## Demo Video
+Link to the demo video. Dropbox let's you watch this at two times speed.
+https://www.dropbox.com/s/rg0q2gspyk3hrny/QuestokenDemo.mov?dl=0
 
-Run the following commands in your CLI in order to install the required packages on your machine to run QuesToken on your localserver (note that the default website is at https://localhost:3000).
+## Local Installation
+
+Run the following commands in your CLI in order to install the required packages on your machine to run QuesToken on your localserver (note that the default website is at https://localhost:3000). Ethereum Smart Contracts and Firebase
+work on local installation.
 ```
 // Install Node Package Manager (if needed)
 1. brew install node
@@ -34,22 +39,33 @@ Run the following commands in your CLI in order to install the required packages
 // .json files in /build/contracts and then recompile.
 6. truffle compile
 
-// Install Ganache and start Ganache.
-// To migrate contracts to the private blockchain, run the following command:
-7. truffle migrate
+// Ganache is needed to run a private blockchain.
+7. Install Ganache and start Ganache. Here: http://truffleframework.com/ganache/.
 
-8. Get Metamask. We tested on Chrome.
+// To migrate contracts to the private blockchain, run the following command:
+// If this gives an error, delete .json files from /build/contracts file.
+// Recompile and then run Ganache and migrate again.
+8. truffle migrate
+
+9. Get Metamask. We tested on Chrome.
 You can use this link: https://metamask.io/#how-it-works.
 
-9. To configure Metamask to work with Ganache, use this link:
+10. To configure Metamask to work with Ganache, use this link:
 http://truffleframework.com/tutorials/pet-shop. Literally,
-follow the instructions in the "Installing and configuring Metamask".
+follow the instructions in the "Installing and configuring Metamask" header.
 The wallet seed would be the mnemonic in Ganache UI. As mentioned
 in the tutorial, create a Custom RPC and enter http://127.0.0.1:7545.
 
 // run QuesToken with default page on https://localhost:3000
-10. npm run start
+11. npm run start
 ```
+
+## Live Deployment
+
+https://questokenapp.herokuapp.com/
+This is the live deployed link. If you have a local copy of the code,
+compile the countracts, start Ganache, migrate the code, set up metamask
+with Ganache (like described above), it should work with the Ethereum.
 
 ## Main File Reference
 
