@@ -1,6 +1,3 @@
-// unresolvedQuestionData
-
-
 import React, { Component } from 'react'
 import { Dropdown, DropdownMenu, DropdownToggle } from 'reactstrap';
 import { Button } from 'reactstrap';
@@ -165,6 +162,7 @@ export default class AnswerQuestion extends Component {
 
       if (currentUserID === askerID) {
         // RETURN ERROR MESSAGE SAYING YOU CANNOT ANSWER YOUR OWN QUESTION
+        alert('Error: Cannot answer your own question!');
         window.location.href = "/askquestion";
       }
       else {
@@ -228,6 +226,7 @@ export default class AnswerQuestion extends Component {
     this.props.web.eth.getAccounts(function(error, accounts) {
       if (error) {
         console.log(error);
+        alert(error);
       }
 
       var account = accounts[0];
@@ -322,7 +321,7 @@ export default class AnswerQuestion extends Component {
               </div>
             </label>
             <div className='answerBox'>
-              <input
+              <textarea
                 className='answerBox1'
                 type='text'
                 placeholder='Write answer here'

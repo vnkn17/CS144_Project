@@ -399,7 +399,8 @@ export default class PledgeTokens extends Component {
       });
 
       // Update tokensAwarded (sucess message?)
-
+      alert('Tokens successfully awarded!');
+      location.reload();
   }
 
   render() {
