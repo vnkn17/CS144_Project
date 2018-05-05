@@ -116,7 +116,8 @@ export default class AskQuestion extends Component {
           database.ref('/questions/unresolved/' + 0).set({
             questionID: 0,
             askerID: userID,
-            done: false
+            done: false,
+            reviewerCount: 0
 
           });
 
@@ -144,7 +145,8 @@ export default class AskQuestion extends Component {
               database.ref('/questions/unresolved/' + newUnresIndex).set({
                 questionID: newQuestionId,
                 askerID: userID,
-                done: false
+                done: false,
+                reviewerCount: 0
 
               });
             });
