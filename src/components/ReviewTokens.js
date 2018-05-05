@@ -399,7 +399,6 @@ export default class ReviewTokens extends Component {
             database.ref('/questions/questionData/' + componentVariable.state.questionId + '/answers/answerData/').once("value").then(function(answerSnap) {
               var answer = answerSnap.val();
               var pledgeList = [];
-              var modifiedReviewList = [];
               var strike = false;
 
               for(var i = 0; i < answer.length; i++) {
@@ -420,47 +419,17 @@ export default class ReviewTokens extends Component {
               console.log(pledgeList)
               // Review Distributions: List of List of ratings for every questions.
               // Each list should have 3 responses.
-              var average;
-              for(var k = 0; k < reviewDistributions.length; k++)
-              {
-                var average = 0;
-                average += reviewDistributions[k];
-                average = average/3;
-                modifiedReviewList.push(average);
-              }
-              var pledgeone = modifiedReviewList[0];
-              var pledgetwo = modifiedReviewList[1];
-              var pledgethree = modifiedReviewList[2];
-
-              var modifiedReviewOne = 100 * (pledgeone - 1)/(pledgeone + pledgetwo + pledgethree - 3);
-              var modifiedReviewTwo = 100 * (pledgetwo - 1)/(pledgeone + pledgetwo + pledgethree - 3);
-              var modifiedReviewThree = 100 * (pledgetwo - 1)/(pledgeone + pledgetwo + pledgethree - 3);
-
-
-              modifiedReviewList[0] = modifiedReviewOne;
-              modifiedReviewList[1] = modifiedReviewTwo;
-              modifiedReviewList[2] = modifiedReviewThree;
-
               var penalty = 0;
-              var differenceone =  pledgeList[0] - modifiedReviewList[0] ;
-              if(differenceone > 0)
-              {
-                  penalty += differenceone * differenceone;
+              for(var k = 0; k < reviewDistributions.length; k++) {
+                var average = (reviewDistributions[k][0] + reviewDistributions[k][1] + reviewDistributions[k][2] - 3) * 25.0 / 3;
+                var difference = pledgeList[k] - average;
+                if (difference > 0) {
+                  penalty += difference * difference;
+                }
               }
-              var differencetwo =  pledgeList[1] - modifiedReviewList[1] ;
-              if(differencetwo > 0)
-              {
-                  penalty += differencetwo * differencetwo;
-              }
-              var differencethree =  pledgeList[2] - modifiedReviewList[2] ;
-              if(differencethree > 0)
-              {
-                  penalty += differencethree * differencethree;
-              }
-              if(penalty >= 2500)
-              {
-                strike = true;
 
+              if(penalty >= 2500) {
+                strike = true;
               }
               console.log(strike);
 
