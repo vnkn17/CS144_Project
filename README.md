@@ -64,7 +64,7 @@ in the tutorial, create a Custom RPC and enter http://127.0.0.1:7545.
 
 https://questokenapp.herokuapp.com/
 This is the live deployed link. If you have a local copy of the code,
-compile the countracts, start Ganache, migrate the code, set up metamask
+compile the contracts, start Ganache, migrate the code, set up metamask
 with Ganache (like described above), it should work with the Ethereum.
 
 ## Main File Reference
